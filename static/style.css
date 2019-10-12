@@ -1,0 +1,55 @@
+
+#leafletmap { height: 620px; }
+
+#control-panel {
+    padding: 10px;
+    text-align: center;
+}
+#control-panel .checkBoxContainer {
+    padding-top: 20px;
+}
+#control-panel .checkBoxContainer label {
+    padding-left: 2vw;
+}
+#control-panel .checkBoxContainer input {
+    margin: 0 10px 0 0;
+}
+[for=neutral] {
+    background-color: #FFAE03;
+}
+[for=death] {
+    background-color: #FF0F80;
+}
+[for=danger] {
+    background-color: #E9190F;
+}
+[for=hazard] {
+    background-color: #FE4E00;
+}
+[for=warning] {
+    background-color: #E67F0D;
+}
+
+
+.jumbo {
+    text-align: center;
+    padding: 10px;
+}
+.jumbo img {
+    max-width: 100%;
+    max-height: 160px;
+}
+
+
+.iconDiv {
+    text-align: center;
+    font-size: 2em;
+}
+.iconDiv:hover {
+    font-size: 2.3em;
+}
+.iconDiv i {
+    line-height: 40px;
+    width:  100%;
+    height: 100%;
+}

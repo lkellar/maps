@@ -1,20 +1,50 @@
 <html lang="en">
 <head>
     <title>Crime Map</title>
+    <script src="https://kit.fontawesome.com/64fa348c63.js" crossorigin="anonymous"></script>
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
           integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
           crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css"/>
     <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
             integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
             crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 
-    <script src="map.js"></script>
-
-    <style>
-        #mapid { height: 180px; }
-    </style>
+    <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
-    <div id="mapid"></div>
+    <div class="jumbo">
+        <img src="static/logo.png">
+    </div>
+    <div id="control-panel">
+        <label for="selectDaysAgo">Date range: </label>
+        <select id="selectDaysAgo" onchange="main()">
+            <option value="0" selected>Past day</option>
+            <option value="1" selected>Past two days</option>
+            <option value="2">Past three days</option>
+            <option value="7">Past week</option>
+            <option value="30">Past month</option>
+        </select>
+        <div class="checkBoxContainer">
+            <label for="neutral">Neutral</label>
+            <input type="checkbox" id="neutral" name="neutral" value="Neutral" checked onchange="main()">
+            <label for="warning">Warning</label>
+            <input type="checkbox" id="warning" name="warning" value="Warning" checked onchange="main()">
+            <label for="hazard">Hazard</label>
+            <input type="checkbox" id="hazard" name="hazard" value="Hazard" checked onchange="main()">
+            <label for="danger">Danger</label>
+            <input type="checkbox" id="danger" name="danger" value="Danger" checked onchange="main()">
+            <label for="death">Death</label>
+            <input type="checkbox" id="death" name="death" value="Death" checked onchange="main()">
+        </div>
+    </div>
+    <div id="leafletmap"></div>
 </body>
+
+<script src="/static/config.js"></script>
+<script src="/static/map.js"></script>
+
 </html>

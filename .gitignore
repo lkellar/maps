@@ -231,6 +231,6 @@ fabric.properties
 gen
 
 *.json
-*.sqlite3
+*.sqlite
 *.wsgi
 *.sketch

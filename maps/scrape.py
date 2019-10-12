@@ -19,12 +19,13 @@ def scrape_calls(date1: datetime, date2: datetime):
 def insert_data(calls):
     with sqlite3.connect(DB_PATH) as conn:
         c = conn.cursor()
+        prepared = []
         for call in calls:
             dt = datetime.strptime(call["DispatchTime"] + " " + call["DispatchTime2"], "%m-%d-%Y %H:%M:%S")
-            params = (dt, call["lat"], call["lon"], call["City"], call["CallType"], call["Address"])
-            sql = '''INSERT OR REPLACE INTO calls (datetime, lat, lon, city, call_type, address)
-            VALUES (?,?,?,?,?,?)'''
-            c.execute(sql, params)
+            values = (dt, call["lat"], call["lon"], call["City"], call["CallType"], call["Address"])
+            prepared.append(values)
+        c.executemany('''INSERT OR REPLACE INTO calls (datetime, lat, lon, city, call_type, address)
+        VALUES (?,?,?,?,?,?)''', prepared)
 
     conn.commit()
 

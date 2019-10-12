@@ -21,7 +21,7 @@ def init_db(conn):
 
 def drop_db(conn):
     c = conn.cursor()
-    c.execute('DROP TABLE calls')
+    c.execute('DROP TABLE IF EXISTS calls')
     conn.commit()
 
 

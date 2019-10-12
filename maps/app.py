@@ -2,20 +2,21 @@ from os import path
 from datetime import datetime, timedelta
 import sqlite3
 
-from flask import Flask, g, jsonify, request
+from flask import Flask, g, jsonify, request, render_template
 
-from maps.config import TIMEZONE, DB_PATH
+from maps.config import *
 
 
-current_dir = path.dirname(path.realpath(__file__))
-
-app = Flask(__name__, static_folder='../static', static_url_path='/static')
+app = Flask(__name__, static_folder='../static', static_url_path='/static',
+            template_folder='../templates/')
 app.config['SQLALCHEMY_DATABASE_URI'] = '../data.sqlite3'
+
 
 @app.route('/')
 def index():
     # Index.html doesn't exist yet, actually
-    return app.send_static_file('index.html')
+    return render_template('index.html')
+
 
 @app.route('/fetch')
 def fetch_days():
@@ -37,6 +38,7 @@ def fetch_days():
     data = [dict(i) for i in data]
     return jsonify(data)
 
+
 def get_db():
     db = getattr(g, '_database', None)
     if not db:
@@ -46,11 +48,13 @@ def get_db():
 
     return db
 
+
 @app.teardown_appcontext
 def teardown_db(exception):
     db = getattr(g, '_database', None)
     if db:
         db.close()
+
 
 if __name__ == "__main__":
     app.run()

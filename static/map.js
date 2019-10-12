@@ -1,4 +1,36 @@
 
+function timeSince(date) {
+    var seconds = Math.floor((new Date() - date) / 1000);
+    var interval = Math.floor(seconds / 31536000);
+
+    if (interval > 1) {
+        return interval + " years";
+    }
+    interval = Math.floor(seconds / 2592000);
+    if (interval > 1) {
+        return interval + " months";
+    }
+    interval = Math.floor(seconds / 86400);
+    if (interval > 1) {
+        return interval + " days";
+    }
+    interval = Math.floor(seconds / 3600);
+    if (interval > 1) {
+        return interval + " hours";
+    }
+    interval = Math.floor(seconds / 60);
+    if (interval > 1) {
+        return interval + " minutes";
+    }
+    return Math.floor(seconds) + " seconds";
+}
+
+
+
+
+
+
+
 
 function initMap() {
     map = L.map('leafletmap').setView([36.082157, -94.171852], 13);
@@ -28,10 +60,12 @@ function displayMap(data, filter=null) {
                         className: 'iconDiv'
                     });
 
+                    $time_ago = timeSince(new Date(call["datetime"]));
+
                     let marker = L.marker(latlon, {
                         icon: myIcon,
                         timestamp: call["datetime"]
-                    }).bindPopup(`${call["call_type"]} <br> ${call["address"]} <br> ${call["city"]}`)
+                    }).bindPopup(`${call["call_type"]} <br> ${call["address"]} <br> ${call["city"]} <br> ${call["datetime"]} (${$time_ago} ago)`)
                         .openPopup();
 
                     markers.addLayer(marker);

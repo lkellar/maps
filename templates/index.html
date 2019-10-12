@@ -13,11 +13,11 @@
             crossorigin=""></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 
-    <link rel="stylesheet" href="static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="jumbo">
-        <img src="static/logo.png">
+        <img alt src="{{ url_for('static', filename='logo.png') }}">
     </div>
     <div id="control-panel">
         <label for="selectDaysAgo">Date range: </label>
@@ -29,7 +29,7 @@
             <option value="30">Past month</option>
         </select>
         <div class="checkBoxContainer">
-            <label for="neutral">Neutral</label>
+            <label for="neutral">General</label>
             <input type="checkbox" id="neutral" name="neutral" value="Neutral" checked onchange="main()">
             <label for="warning">Warning</label>
             <input type="checkbox" id="warning" name="warning" value="Warning" checked onchange="main()">
@@ -44,7 +44,7 @@
     <div id="leafletmap"></div>
 </body>
 
-<script src="/static/config.js"></script>
-<script src="/static/map.js"></script>
+<script src="{{ url_for('static', filename='config.js') }}"></script>
+<script src="{{ url_for('static', filename='map.js') }}"></script>
 
 </html>

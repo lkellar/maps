@@ -1,0 +1,1 @@
+*/30 * * * * /var/www/maps/.venv/bin/python /var/www/maps/maps/cli.py scrape 0 > /var/www/maps/log.txt

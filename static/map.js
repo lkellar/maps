@@ -43,7 +43,7 @@ function initMap() {
 
 function displayMap(data, filter=null) {
     markers = L.markerClusterGroup({
-        maxClusterRadius: 2
+        maxClusterRadius: 40
     });
     for (const call of data) {
         if (call["address"] !== "<UNKNOWN>" && call["city"] !== null) {

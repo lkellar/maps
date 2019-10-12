@@ -51,7 +51,7 @@ function displayMap(data, filter=null) {
 
             let cfg = callTypeConfig[call["call_type"]];
             if (cfg !== false) {
-                cfg = (cfg === null) ? callTypeConfig["DEFAULT"] : cfg;
+                cfg = (cfg === null || cfg === undefined) ? callTypeConfig["DEFAULT"] : cfg;
                 let [icon, color] = cfg;
                 if (filter === null || filter.includes(color)) {
                     let myIcon = L.divIcon({

@@ -1,6 +1,6 @@
 
 function timeSince(date) {
-    var seconds = Math.floor((new Date() - date) / 1000);
+    var seconds = Math.floor((new Date() - new Date(date)) / 1000);
     var interval = Math.floor(seconds / 31536000);
 
     if (interval > 1) {
@@ -60,7 +60,7 @@ function displayMap(data, filter=null) {
                         className: 'iconDiv'
                     });
 
-                    let time_ago = timeSince(new Date(call["datetime"].replace(" ", "T")));
+                    let time_ago = timeSince(call["datetime"].replace(" ", "T"));
 
                     let marker = L.marker(latlon, {
                         icon: myIcon,

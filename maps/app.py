@@ -14,7 +14,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = '../data.sqlite3'
 
 @app.route('/')
 def index():
-    # Index.html doesn't exist yet, actually
     return render_template('index.html')
 
 

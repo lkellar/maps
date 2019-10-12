@@ -60,12 +60,12 @@ function displayMap(data, filter=null) {
                         className: 'iconDiv'
                     });
 
-                    $time_ago = timeSince(new Date(call["datetime"]));
+                    let time_ago = timeSince(new Date(call["datetime"]));
 
                     let marker = L.marker(latlon, {
                         icon: myIcon,
                         timestamp: call["datetime"]
-                    }).bindPopup(`${call["call_type"]} <br> ${call["address"]} <br> ${call["city"]} <br> ${call["datetime"]} (${$time_ago} ago)`)
+                    }).bindPopup(`${call["call_type"]} <br> ${call["address"]} <br> ${call["city"]} <br> ${call["datetime"]} (${time_ago} ago)`)
                         .openPopup();
 
                     markers.addLayer(marker);

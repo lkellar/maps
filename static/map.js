@@ -17,7 +17,7 @@ function displayMap(data) {
 
 
 
-fetch('fetch')
+fetch('fetch?days=2')
     .then(response => {
         return response.json()
     })

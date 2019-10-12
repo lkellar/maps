@@ -30,7 +30,11 @@ def insert_data(calls):
     conn.commit()
 
 
-if __name__ == '__main__':
+def fetch_data(days_ago=1):
     today = datetime.today()
-    data = scrape_calls(today - timedelta(days=1), today + timedelta(days=1))
+    data = scrape_calls(today - timedelta(days=days_ago), today + timedelta(days=1))
     insert_data(data)
+
+
+if __name__ == '__main__':
+    fetch_data(1)

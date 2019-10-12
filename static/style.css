@@ -12,7 +12,7 @@
     padding-left: 2vw;
 }
 #control-panel .checkBoxContainer input {
-    margin: 0 10px 0 0;
+    margin: 5px 10px 0 0;
 }
 [for=neutral] {
     background-color: #FFAE03;

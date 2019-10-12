@@ -60,7 +60,7 @@ function displayMap(data, filter=null) {
                         className: 'iconDiv'
                     });
 
-                    let time_ago = timeSince(new Date(call["datetime"]));
+                    let time_ago = timeSince(new Date(call["datetime"].replace(" ", "T")));
 
                     let marker = L.marker(latlon, {
                         icon: myIcon,

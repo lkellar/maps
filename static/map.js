@@ -1,6 +1,8 @@
-
 function timeSince(date) {
-    var seconds = Math.floor((new Date() - date) / 1000);
+    var oldDate = luxon.DateTime.fromISO(date, {zone: 'America/Chicago'});
+    var now = luxon.DateTime.local().setZone('America/Chicago');
+    var seconds = ((now - oldDate) / 1000);
+    console.log(seconds);
     var interval = Math.floor(seconds / 31536000);
 
     if (interval > 1) {
@@ -24,11 +26,6 @@ function timeSince(date) {
     }
     return Math.floor(seconds) + " seconds";
 }
-
-
-
-
-
 
 
 
@@ -60,7 +57,7 @@ function displayMap(data, filter=null) {
                         className: 'iconDiv'
                     });
 
-                    let time_ago = timeSince(new Date(call["datetime"].replace(" ", "T")));
+                    let time_ago = timeSince(call["datetime"].replace(" ", "T"));
 
                     let marker = L.marker(latlon, {
                         icon: myIcon,

@@ -1,4 +1,5 @@
 function timeSince(date) {
+
     var oldDate = luxon.DateTime.fromISO(date, {zone: 'America/Chicago'});
     var now = luxon.DateTime.local().setZone('America/Chicago');
     var seconds = ((now - oldDate) / 1000);

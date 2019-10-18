@@ -42,6 +42,6 @@ The above command would scrape 15 days.
 
 #### `refresh`
 
-Refresh wipes the database, and initializes it again. This command can also be used to initialize the database for the first time, and **must** be run before scraping data.
+Refresh wipes the database, and initializes it again. This command can also be used to initialize the database for the first time (which must be done in order to start scraping data).
 
 `python -m maps.cli refresh`

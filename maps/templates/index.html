@@ -13,7 +13,6 @@
             integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
             crossorigin=""></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/luxon@1.19.3/build/global/luxon.min.js"></script>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
@@ -24,6 +23,7 @@
     <div id="control-panel">
         <label for="selectDaysAgo">Date range: </label>
         <select id="selectDaysAgo" onchange="main()">
+            <option value=".5" selected>Past 12 hours</option>
             <option value="1" selected>Past 24 hours</option>
             <option value="2">Past two days</option>
             <option value="3">Past three days</option>

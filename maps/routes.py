@@ -1,3 +1,7 @@
+"""
+Define routes.
+"""
+
 from flask import render_template, flash, redirect, url_for, request, jsonify
 from maps import app, db
 from maps.models import Call
@@ -13,11 +17,11 @@ def index():
 def fetch_days(days=1):
     days = float(days)
 
-    # get current date
+    # Get current date
     now = datetime.now(tz=app.config['TIMEZONE'])
     start = now - timedelta(days=days)
 
     data = Call.query.filter(Call.timestamp.between(start, now)).all()
 
-    # convert all the call objects to dict
+    # Convert all the call objects to dict
     return jsonify([i.serialize for i in data])

@@ -19,9 +19,9 @@ if not app.debug and not app.testing:
     if not os.path.exists('logs'):
         os.mkdir('logs')
     handler = RotatingFileHandler('logs/maps.log', maxBytes=10240, backupCount=1)
-    handler.setLevel(logging.INFO)
     app.logger.addHandler(handler)
 
+    app.logger.setLevel(logging.INFO)
     app.logger.info('Crime Map startup')
 
 

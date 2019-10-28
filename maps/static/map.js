@@ -1,5 +1,6 @@
-function timeSince(date) {
-    let seconds = ((new Date() - date) / 1000);
+function timeSince(dt) {
+    let now = DateTime.utc();
+    let seconds = ((now - dt) / 1000);
     let interval = Math.floor(seconds / 31536000);
 
     if (interval > 1) {
@@ -54,13 +55,14 @@ function displayMap(data, filter=null) {
                         className: 'iconDiv'
                     });
 
-                    let timestamp = new Date(call["timestamp"]*1000);
-                    let time_ago = timeSince(timestamp);
+                    let datetime = DateTime.fromISO(call["timestamp"]);
+                    let time_ago = timeSince(datetime);
+                    let dt_string = datetime.toLocaleString(DateTime.DATETIME_SHORT);
 
                     let marker = L.marker(latlon, {
                         icon: myIcon,
                         timestamp: call["timestamp"]
-                    }).bindPopup(`${call["call_type"]} <br> ${call["address"]} <br> ${call["city"]} <br> ${timestamp.toLocaleString()} (${time_ago} ago)`)
+                    }).bindPopup(`${call["call_type"]} <br> ${call["address"]} <br> ${call["city"]} <br> ${dt_string} (${time_ago} ago)`)
                         .openPopup();
 
                     markers.addLayer(marker);
@@ -71,6 +73,7 @@ function displayMap(data, filter=null) {
     map.addLayer(markers);
 }
 
+const DateTime = luxon.DateTime;
 
 let data;
 let markers;

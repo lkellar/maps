@@ -17,15 +17,23 @@ def scrape_calls(date1: datetime, date2: datetime):
     return j
 
 
-def insert_data(call_data):
+def insert_data(call_data, v=0):
     for row_data in call_data:
         call = None
         try:
             call = Call(row_data)
         except Exception as e:
-            print('Warning: ', e)
-        if call and not CallQuery.get_call_exists(call):
-            db.session.add(call)
+            app.logger.warning('Scraper: {}'.format(e))
+        if call:
+            existing_id = CallQuery.get_existing_id(call)
+            if existing_id is not None:
+                call.id = existing_id
+                if v >= 2:
+                    app.logger.info('Scraper: Merging {} into existing Call'.format(call))
+            elif v >= 1:
+                app.logger.info('Scraper: Adding new call {}'.format(call))
+            db.session.merge(call)
+            db.session.flush()
     db.session.commit()
 
 
@@ -34,7 +42,7 @@ def insert_data(call_data):
 def scrape(days):
     today = datetime.today()
     data = scrape_calls(today - timedelta(days=days), today + timedelta(days=1))
-    insert_data(data)
+    insert_data(data, 1)
 
 
 if __name__ == '__main__':

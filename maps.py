@@ -1,5 +1,5 @@
 """
-Main file for starting Flask application.
+Main file for launching Flask application.
 """
 
 from maps import app, db

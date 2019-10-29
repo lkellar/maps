@@ -1,9 +1,7 @@
-function timeSince(date) {
-
-    var oldDate = luxon.DateTime.fromISO(date, {zone: 'America/Chicago'});
-    var now = luxon.DateTime.local().setZone('America/Chicago');
-    var seconds = ((now - oldDate) / 1000);
-    var interval = Math.floor(seconds / 31536000);
+function timeSince(dt) {
+    let now = DateTime.utc();
+    let seconds = ((now - dt) / 1000);
+    let interval = Math.floor(seconds / 31536000);
 
     if (interval > 1) {
         return interval + " years";
@@ -57,12 +55,14 @@ function displayMap(data, filter=null) {
                         className: 'iconDiv'
                     });
 
-                    let time_ago = timeSince(call["datetime"].replace(" ", "T"));
+                    let datetime = DateTime.fromISO(call["timestamp"]);
+                    let time_ago = timeSince(datetime);
+                    let dt_string = datetime.toLocaleString(DateTime.DATETIME_SHORT);
 
                     let marker = L.marker(latlon, {
                         icon: myIcon,
-                        timestamp: call["datetime"]
-                    }).bindPopup(`${call["call_type"]} <br> ${call["address"]} <br> ${call["city"]} <br> ${call["datetime"]} (${time_ago} ago)`)
+                        timestamp: call["timestamp"]
+                    }).bindPopup(`${call["call_type"]} <br> ${call["address"]} <br> ${call["city"]} <br> ${dt_string} (${time_ago} ago)`)
                         .openPopup();
 
                     markers.addLayer(marker);
@@ -73,6 +73,7 @@ function displayMap(data, filter=null) {
     map.addLayer(markers);
 }
 
+const DateTime = luxon.DateTime;
 
 let data;
 let markers;
@@ -94,7 +95,7 @@ async function main() {
     let daysAgo = document.getElementById("selectDaysAgo");
     daysAgo = daysAgo.options[daysAgo.selectedIndex].value;
 
-    data = await fetch(`fetch?days=${daysAgo}`)
+    data = await fetch(`/fetch/${daysAgo}`)
         .then(response => {
             return response.json()
         })

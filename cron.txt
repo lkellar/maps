@@ -1,1 +1,1 @@
-*/30 * * * * cd /var/www/maps/ && .venv/bin/python -m maps.cli scrape 0 > log.txt
+*/30 * * * * cd /var/www/maps/ && .venv/bin/python -m maps.scrape > log.txt

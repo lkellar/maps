@@ -9,39 +9,27 @@ Installation is pretty simple. Clone the repo, install python dependencies with 
 
 `pipenv install`
 
-Next, initialize the db with the cli, with the following command
+Next, run the scraper with the following sample command:
 
-`python -m maps.cli refresh`
+`python -m maps.scrape 30`
 
-Then, run the scraper via the cli, with the following sample command
+which will scrape 911 calls for the past 30 days. Read the [Scraper documentation](#scraper) for more info.
 
-`python -m maps.cli scrape 30`
-
-which will scrape 911 calls for the past 30 days. I highly recommend reading the [CLI documentation](#cli) for more info.
-
-Once you've scraped the data, go ahead and start the flask server!, which resides in the maps.app file.
+Once you've scraped the data, go ahead and start the flask server!, which resides in the maps.py file.
 
 ## Website
 ![A view of the main map view](screenshots/main.png)
 
 Once the server is up and running, this is what users see. We hope it's pretty clear on how to use!
 
-## CLI
+## Scraper
 
-The CLI has two different commands, `scrape` and `refresh`.
+The Scraper fetches 911 calls and inserts them into the call database. You can run the scraper like this:
 
-It can be run by just running the `maps/cli.py` file, with one of the commands as a parameter.
+`python -m maps.scrape`
 
-#### `scrape`
+The above command would scrape all data back to 24 hours ago. You can also specify how far back you want to scrape:
 
-Scrape is the command to scrape the 911 call database. After the `scrape` command, put the number of days you want to scrape.
-
-`python -m maps.cli scrape 15`
+`python -m maps.scrape 15`
 
 The above command would scrape 15 days. 
-
-#### `refresh`
-
-Refresh wipes the database, and initializes it again. This command can also be used to initialize the database for the first time (which must be done in order to start scraping data).
-
-`python -m maps.cli refresh`

@@ -1,8 +1,9 @@
+from maps import app, db
+from maps.models import Call, CallQuery
 import requests
 from datetime import datetime, timedelta
-import sqlite3
 
-from maps.config import *
+import click
 
 
 def format_date(dt: datetime):
@@ -16,25 +17,34 @@ def scrape_calls(date1: datetime, date2: datetime):
     return j
 
 
-def insert_data(calls):
-    with sqlite3.connect(DB_PATH) as conn:
-        c = conn.cursor()
-        prepared = []
-        for call in calls:
-            dt = datetime.strptime(call["DispatchTime"] + " " + call["DispatchTime2"], "%m-%d-%Y %H:%M:%S")
-            values = (dt, call["lat"], call["lon"], call["City"], call["CallType"], call["Address"])
-            prepared.append(values)
-        c.executemany('''INSERT OR REPLACE INTO calls (datetime, lat, lon, city, call_type, address)
-        VALUES (?,?,?,?,?,?)''', prepared)
+def insert_data(call_data, v=0):
+    for row_data in call_data:
+        call = None
+        try:
+            call = Call(row_data)
+        except Exception as e:
+            app.logger.warning('Scraper: {}'.format(e))
+        if call:
+            existing_id = CallQuery.get_existing_id(call)
+            if existing_id is not None:
+                call.id = existing_id
+                if v >= 2:
+                    app.logger.info('Scraper: Merging {} into existing Call'.format(call))
+            elif v >= 1:
+                app.logger.info('Scraper: Adding new call {}'.format(call))
+            db.session.merge(call)
+            db.session.flush()
+    db.session.commit()
 
-    conn.commit()
 
-
-def fetch_data(days_ago=1):
+@click.command()
+@click.argument('days', default=1)
+def scrape(days):
     today = datetime.today()
-    data = scrape_calls(today - timedelta(days=days_ago), today + timedelta(days=1))
-    insert_data(data)
+    data = scrape_calls(today - timedelta(days=days), today + timedelta(days=1))
+    insert_data(data, 1)
 
 
 if __name__ == '__main__':
-    fetch_data(1)
+    db.create_all()
+    scrape()

@@ -95,7 +95,7 @@ async function main() {
     let daysAgo = document.getElementById("selectDaysAgo");
     daysAgo = daysAgo.options[daysAgo.selectedIndex].value;
 
-    data = await fetch(`/fetch/${daysAgo}`)
+    data = await fetch(`fetch/${daysAgo}`)
         .then(response => {
             return response.json()
         })

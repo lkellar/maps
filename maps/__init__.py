@@ -10,7 +10,8 @@ from flask_sqlalchemy import SQLAlchemy
 from config import Config, basedir
 
 # Set up server configuration
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', static_url_path='/static',
+            template_folder='templates')
 app.config.from_object(Config)
 db = SQLAlchemy(app)
 

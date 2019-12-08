@@ -80,7 +80,7 @@ const callTypeConfig = {
     "FD RESCUE": null,
     "FOUND PERSON": null,
     "INDECENT EXPOSURE": null,
-    "SHOOTING": null,
+    "SHOOTING": ["fa-skull-crossbones", death],
     "FD LIFTING ASSISTANCE": null,
     "TRAFFIC CONTROL": trafficConfig,
     "TRAFFIC LIGHT MALFUNCTION": trafficConfig,

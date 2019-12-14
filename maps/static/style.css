@@ -10,14 +10,19 @@
 }
 #control-panel .checkBoxContainer label {
     padding-left: 2vw;
+    padding-right: 3px;
 }
 #control-panel .checkBoxContainer input {
     margin: 5px 10px 0 0;
 }
-[for=neutral] {
+[for=general] {
     background-color: #FFAE03;
 }
 [for=death] {
+    background-color: #000000;
+    color: white;
+}
+[for=lethal] {
     background-color: #FF0F80;
 }
 [for=danger] {

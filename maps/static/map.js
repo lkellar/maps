@@ -44,10 +44,10 @@ function displayMap(data, filter=null) {
         if (call["address"] !== "<UNKNOWN>" && call["city"] !== null) {
             let latlon = [call["lat"], call["lon"]];
 
-            let cfg = callTypeConfig[call["call_type"]];
+            let cfg = CALL_TYPES[call["call_type"]];
             if (cfg !== false) {
-                cfg = (cfg === null || cfg === undefined) ? callTypeConfig["DEFAULT"] : cfg;
-                let [icon, color] = cfg;
+                cfg = (cfg === null || cfg === undefined) ? CALL_TYPES.DEFAULT : cfg;
+                let [color, icon] = cfg;
                 if (filter === null || filter.includes(color)) {
                     let myIcon = L.divIcon({
                         html: `<i class="fa ${icon}" style="color: ${color};"></i>`,
@@ -81,16 +81,18 @@ let map;
 
 async function main() {
     let filter = [];
-    if (document.getElementById("neutral").checked)
-        filter.push(neutral);
+    if (document.getElementById("general").checked)
+        filter.push(colors.GENERAL);
     if (document.getElementById("warning").checked)
-        filter.push(warning);
+        filter.push(colors.WARNING);
     if (document.getElementById("hazard").checked)
-        filter.push(hazard);
+        filter.push(colors.HAZARD);
     if (document.getElementById("danger").checked)
-        filter.push(danger);
+        filter.push(colors.DANGER);
+    if (document.getElementById("lethal").checked)
+        filter.push(colors.LETHAL);
     if (document.getElementById("death").checked)
-        filter.push(death);
+        filter.push(colors.DEATH);
 
     let daysAgo = document.getElementById("selectDaysAgo");
     daysAgo = daysAgo.options[daysAgo.selectedIndex].value;

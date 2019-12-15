@@ -1,57 +1,11 @@
-// const neutral = "#FFAE03";
-// const death = "#FF0F80";
-// const danger = "#E9190F";
-// const hazard = "#FE4E00";
-// const warning = "#E67F0D";
-
 
 const colors = {
-    // GENERAL: "#FFAE03",  // general calls
-
-    // Misdemeanor
-    // Class A:
-    //  Assault causing bodily injury, burglary, DUI w/o bodily injury, possession of controlled substance or weapon
-    // Class B:
-    //  Criminal mischief, criminal trespass, mild assault, indecent exposure, prostitution, graffiti, small theft
-
-    // Felony
-    // First-degree:
-    //  Murder, rape, kidnapping, arson, fraud
-    // Second-degree:
-    //  Aggravated assault, felony assault, arson, manslaughter, possession of controlled substance, child molestation
-    // Third-degree:
-    //  Assault and battery, elder abuse, transmission of pornography, driving under the influence, fraud, arson
-    // Fourth-degree:
-    //  Involuntary manslaughter, burglary, larceny, resisting arrest
-    // Federal:
-    //  Bank fraud, Embezzlement, Credit card fraud, Forgery, Health care fraud
-
-    // CRIME1: "#f97",  // Misdemeanor
-    // CRIME2: "#f55",  // Non-violent felony
-    // CRIME3: "#f00", // Violent felony
-
-    // Danger
-    // WARNING: "#E67F0D",  // possible hazard
-    // HAZARD: "#FE4E00",  // thing that could be dangerous
-    // DANGER: "#E9190F",  // violence probable; do not go here
-
-
-    // How will this affect you
     GENERAL: "#FFAE03",  // General calls
     WARNING: "#E67F0D",  // Warning; may affect you if you are there
     HAZARD: "#FE4E00",  // Hazardous if you are there or nearby
     DANGER: "#E9190F", // Danger to you or others
     LETHAL: "#FF0F80",  // Lethal danger
-    DEATH: "#000000",  // certain death
-
-
-    // ACCIDENT: "#FE4E00",  //
-
-    // WARNING: "#E67F0D",  // possibility of hazard
-    // HAZARD: "#FE4E00",  // a source of danger (NOT IMMINENT)
-
-    // DANGER: "#E9190F",  // probability of violence (NOT VIOLENT)
-    // LETHAL: "#FF0F80",  // lethal danger (NOT DEATH)
+    DEATH: "#000000",  // Certain death
 };
 
 

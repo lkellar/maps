@@ -1,3 +1,12 @@
+const colors = {
+    GENERAL: "#FFAE03",  // General calls
+    WARNING: "#E67F0D",  // Warning; may affect you if you are there
+    HAZARD: "#FE4E00",  // Hazardous if you are there or nearby
+    DANGER: "#E9190F", // Danger to you or others
+    LETHAL: "#FF0F80",  // Lethal danger
+    DEATH: "#000000",  // Certain death
+};
+
 function timeSince(dt) {
     let now = DateTime.utc();
     let seconds = ((now - dt) / 1000);

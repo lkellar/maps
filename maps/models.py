@@ -1,28 +1,15 @@
 """
 Define SQLAlchemy models for the database.
 """
+#pylint: disable=no-member, too-many-arguments
 
-import pytz
-from datetime import datetime, timezone
+from datetime import datetime
 from maps import db
 
 
 def dump_datetime(value):
     """Deserialize datetime object into iso format for JSON processing."""
     return value.strftime('%Y-%m-%dT%H:%M:%SZ')
-
-
-def load_datetime(value):
-    # naive datetime (no timezone attached)
-    naive = datetime.strptime(value, '%m-%d-%Y %H:%M:%S')
-
-    # attach proper timezone for the date (fayetteville.gov uses America/Chicago)
-    pst = pytz.timezone('America/Chicago')
-    dt = pst.localize(naive)
-
-    # convert to UTC timezone
-    dt = dt.astimezone(pytz.UTC)
-    return dt
 
 
 class Call(db.Model):
@@ -35,28 +22,43 @@ class Call(db.Model):
     city = db.Column(db.String)
     call_type = db.Column(db.String)
     address = db.Column(db.String)
+    # Okay, so some cities (like S-dale of course), have extra info, that is still imporatnt, but
+    # not every city will have it. So this is a general notes field, that is intended to be
+    # returned if available, and ignored if not.
+    notes = db.Column(db.String, nullable=True)
 
     __table_args__ = (
         # Two calls are duplicates if they share the same values for these parameters
-        db.UniqueConstraint('timestamp', 'lat', 'lon', 'call_type'),
+        # I changed the lat lon in favor of address because
+        # W/ springdale, If I want to see if a call is in the db, so I don't have to do a Bing
+        # lookup, I can't use coords to compare because the new call won't have any yet.
+        # This should still keep out duplicates.
+        db.UniqueConstraint('timestamp', 'address', 'call_type'),
     )
+
+    def __init__(self, timestamp: datetime, lat: float, lon: float, city: str, call_type: str,
+                 address: str, notes: str = None):
+        '''
+        Default Initializer
+
+        timestamp (datetime): A UTC timestamp of when the call took place
+        lat (float): The latitude of the event
+        lon (float): The longitude of the event
+        call_type (str): The type of call
+        city (str): The city the event occurs in
+        address (str): The address of the event
+        '''
+        self.timestamp = timestamp
+        self.lat = lat
+        self.lon = lon
+        self.call_type = call_type
+        self.city = city
+        self.address = address
+        self.notes = notes
 
     def __repr__(self):
         """Return string representation of call"""
         return '<Call {} {},{} {}>'.format(self.call_type, self.lat, self.lon, self.timestamp)
-
-    def __init__(self, row):
-        """Construct a new call object based on data from scraper"""
-        self.timestamp = load_datetime(row['DispatchTime'] + ' ' + row['DispatchTime2'])
-
-        self.lat = float(row['lat'])
-        self.lon = float(row['lon'])
-        if (self.lat, self.lon) == (-361, -361):
-            raise ValueError('Lat/lon must be specified.')
-
-        self.city = row['City']
-        self.call_type = row['CallType']
-        self.address = row['Address']
 
     @property
     def serialize(self):
@@ -66,7 +68,8 @@ class Call(db.Model):
                 'lon': self.lon,
                 'city': self.city,
                 'call_type': self.call_type,
-                'address': self.address}
+                'address': self.address,
+                'notes': self.notes}
 
 
 class CallQuery:
@@ -74,7 +77,16 @@ class CallQuery:
     @staticmethod
     def get_existing_id(call):
         """Return the id of the call if an equivalent call already exists in the database"""
+        # For the change from address to lat lon, see the comment up above on the __table_args__
         return db.session.query(Call.id).filter_by(
-            timestamp=call.timestamp, lat=call.lat, lon=call.lon, call_type=call.call_type
+            timestamp=call.timestamp, address=call.address, call_type=call.call_type
         ).scalar()
 
+    @staticmethod
+    # Pls don't type set call, BECAUSE, springdale makes a mock call object w/ not everything to
+    # check for duplicates before bing maps lookups
+    def get_existing_call(call):
+        '''Return a call if it exists in the db already'''
+        return db.session.query(Call).filter_by(
+            timestamp=call.timestamp, address=call.address, call_type=call.call_type
+        ).scalar()

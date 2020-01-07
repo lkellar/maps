@@ -38,4 +38,8 @@ The above command would scrape all data back to 24 hours ago. You can also speci
 
 `python -m maps.scrape 15`
 
-The above command would scrape 15 days. 
+The above command would scrape 15 days.
+
+# Supported Cities
+- Fayetteville, Arkansas
+- Springdale, Arkansas (note: doesn't support historical scraping)

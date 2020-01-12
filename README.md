@@ -1,8 +1,12 @@
 # Crime Map
 An easy way to see recent 911 calls made in Fayetteville, Arkansas
 
-## History
+## Awards
 We made this project for the [2019 JB Hunt Hackathon](https://hackathon.jbhunt.com/home) and actually won first prize!
+
+We also submitted this project to the 2019 [Congressional App Challenge](https://www.congressionalappchallenge.us/) in our district, and won.
+
+Here is our [demonstration video](https://www.youtube.com/watch?v=v4vO4bch_oM&t=9s).
 
 ## Installation
 Installation is pretty simple. Clone the repo, install python dependencies with pipenv
@@ -11,16 +15,18 @@ Installation is pretty simple. Clone the repo, install python dependencies with 
 
 Next, run the scraper with the following sample command:
 
-`python -m maps.scrape 30`
+`python -m maps.cli scrape fay 30`
+or
+`flask scrape fay 30`
 
 which will scrape 911 calls for the past 30 days. Read the [Scraper documentation](#scraper) for more info.
 
-Once you've scraped the data, go ahead and start the flask server!, which resides in the maps.py file.
+Once you've scraped the data, go ahead and start the flask server, which resides in the run.py file.
 
-#### ALSO, THERE IS MORE; ENVIRONMENT VARIABLES
-- `BING_MAPS_KEY`: A api key for the [Bing Maps Geocode Dataflow API](https://docs.microsoft.com/en-us/bingmaps/spatial-data-services/geocode-dataflow-api/). Its required for cities like Springdale which don't provide coordinates.
+#### Configuration
+- `BING_MAPS_KEY`: An API key for the [Bing Maps Geocode Dataflow API](https://docs.microsoft.com/en-us/bingmaps/spatial-data-services/geocode-dataflow-api/). It's required for cities like Springdale which don't provide coordinates.
 
-- `MAPS_SENTRY_DSN`: A DSN for sentry. If provided, sentry error reporting is setup.
+- `MAPS_SENTRY_DSN`: A DSN for Sentry. If provided, Sentry error reporting is setup.
 
 
 ## Website
@@ -32,11 +38,15 @@ Once the server is up and running, this is what users see. We hope it's pretty c
 
 The Scraper fetches 911 calls and inserts them into the call database. You can run the scraper like this:
 
-`python -m maps.scrape`
+`python -m maps.cli scrape fay`
+or
+`flask scrape fay`
 
 The above command would scrape all data back to 24 hours ago. You can also specify how far back you want to scrape:
 
-`python -m maps.scrape 15`
+`python -m maps.cli scrape fay 15`
+or
+`flask scrape fay 15`
 
 The above command would scrape 15 days.
 

@@ -1,4 +1,4 @@
-#pylint: disable=wrong-import-position
+# pylint: disable=wrong-import-position
 """
 File for initializing and running flask application.
 """
@@ -13,23 +13,25 @@ import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
-from config import Config, basedir
+import config
+
 
 # Set up server configuration
 app = Flask(__name__, static_folder='static', static_url_path='/static',
-            template_folder='templates')
-app.config.from_object(Config)
-db = SQLAlchemy(app)
-
+            template_folder='templates', instance_relative_config=True)
+app.config.from_object(config)
+app.config.from_pyfile('config.py')
 
 # If a sentry URL exists, enable sentry error reporting
-SENTRY_DSN = os.environ.get('MAPS_SENTRY_DSN')
-
-if SENTRY_DSN:
+if app.config.get('SENTRY_DSN'):
     sentry_sdk.init(
-        dsn=SENTRY_DSN,
+        dsn=app.config['SENTRY_DSN'],
         integrations=[FlaskIntegration(), SqlalchemyIntegration()]
     )
+
+# Initialize Flask SQLAlchemy extension
+db = SQLAlchemy(app)
+
 
 # Set routes and define models
 from maps import routes, models

@@ -1,7 +1,7 @@
 """
 Define SQLAlchemy models for the database.
 """
-#pylint: disable=no-member, too-many-arguments
+# pylint: disable=no-member, too-many-arguments
 
 from datetime import datetime
 from maps import db
@@ -22,39 +22,8 @@ class Call(db.Model):
     city = db.Column(db.String)
     call_type = db.Column(db.String)
     address = db.Column(db.String)
-    # Okay, so some cities (like S-dale of course), have extra info, that is still imporatnt, but
-    # not every city will have it. So this is a general notes field, that is intended to be
-    # returned if available, and ignored if not.
+    # General notes field if available
     notes = db.Column(db.String, nullable=True)
-
-    __table_args__ = (
-        # Two calls are duplicates if they share the same values for these parameters
-        # I changed the lat lon in favor of address because
-        # W/ springdale, If I want to see if a call is in the db, so I don't have to do a Bing
-        # lookup, I can't use coords to compare because the new call won't have any yet.
-        # This should still keep out duplicates.
-        db.UniqueConstraint('timestamp', 'address', 'call_type'),
-    )
-
-    def __init__(self, timestamp: datetime, lat: float, lon: float, city: str, call_type: str,
-                 address: str, notes: str = None):
-        '''
-        Default Initializer
-
-        timestamp (datetime): A UTC timestamp of when the call took place
-        lat (float): The latitude of the event
-        lon (float): The longitude of the event
-        call_type (str): The type of call
-        city (str): The city the event occurs in
-        address (str): The address of the event
-        '''
-        self.timestamp = timestamp
-        self.lat = lat
-        self.lon = lon
-        self.call_type = call_type
-        self.city = city
-        self.address = address
-        self.notes = notes
 
     def __repr__(self):
         """Return string representation of call"""
@@ -73,20 +42,19 @@ class Call(db.Model):
 
 
 class CallQuery:
-    """Custom queries for calls table"""
+    """ Custom queries for calls table """
+
     @staticmethod
-    def get_existing_id(call):
-        """Return the id of the call if an equivalent call already exists in the database"""
-        # For the change from address to lat lon, see the comment up above on the __table_args__
-        return db.session.query(Call.id).filter_by(
-            timestamp=call.timestamp, address=call.address, call_type=call.call_type
+    def get_existing_fayetteville(call):
+        """ Return a call if it exists in the db already """
+        return db.session.query(Call).filter_by(
+            timestamp=call.timestamp, lat=call.lat, lon=call.lon, call_type=call.call_type,
         ).scalar()
 
     @staticmethod
-    # Pls don't type set call, BECAUSE, springdale makes a mock call object w/ not everything to
-    # check for duplicates before bing maps lookups
-    def get_existing_call(call):
-        '''Return a call if it exists in the db already'''
+    def get_existing_springdale(call):
+        """ Return a call if it exists in the db already """
         return db.session.query(Call).filter_by(
-            timestamp=call.timestamp, address=call.address, call_type=call.call_type
+            timestamp=call.timestamp, address=call.address, call_type=call.call_type, city=call.city
         ).scalar()
+

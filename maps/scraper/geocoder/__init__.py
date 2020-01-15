@@ -5,10 +5,12 @@ Why Bing?
     Bing allows first 50,000 requests a year free, unlike Google, which has no free tier.
     Bing also has a not-for-profit plan, which has much higher limits for free
 """
+from flask import current_app
 import time
 
 from .jobmanager import JobManager
 from .settings import GeocodeDataflow
+from .exceptions import BingKeyNotFound
 
 
 # ------------------------------ GEO-CODING FUNCTIONS ------------------------------
@@ -21,6 +23,9 @@ def geocode_lookup(addresses: [str]) -> dict:
     :param addresses: List of all the addresses to geocode.
     :return: a dict of addresses -> (lat, lon)
     """
+
+    if not current_app.config.get("BING_MAPS_KEY"):
+        raise BingKeyNotFound()
 
     job_manager = JobManager()
 

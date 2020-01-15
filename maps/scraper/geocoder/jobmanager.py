@@ -5,7 +5,7 @@ See API documentation:
 """
 import requests
 
-from maps.scraper.exceptions import BingAPIError
+from .exceptions import BingAPIError
 from .settings import GeocodeDataflow, KEY_PARAMS
 
 
@@ -71,7 +71,7 @@ class JobManager:
             return ValueError(f'Only 50 addresses at a time. You provided {len(addresses)} addresses')
 
         # Format each address according to our heading
-        formatted_addresses = [format_address(idx, address) for idx, address in addresses]
+        formatted_addresses = [format_address(idx, address) for idx, address in enumerate(addresses)]
 
         # Generate input data to post in the body of the request
         input_data = GeocodeDataflow.HEADING + '\n' + '\n'.join(formatted_addresses)

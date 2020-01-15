@@ -1,4 +1,3 @@
-from flask import current_app
 from datetime import datetime
 import requests
 import pytz
@@ -6,7 +5,6 @@ import pytz
 from maps import db
 from maps.models import Call, CallQuery
 from maps.scraper.geocoder import geocode_lookup
-from maps.scraper.exceptions import BingKeyNotFound
 from maps.scraper.base import convert_naive_utc
 
 
@@ -14,7 +12,7 @@ SPRINGDALE_TZ = pytz.timezone('America/Chicago')
 
 
 def geocode_calls(calls):
-    addresses = (call.address for call in calls)
+    addresses = [call.address for call in calls]
     address_to_coord = geocode_lookup(addresses)
 
     for call in calls:
@@ -39,8 +37,6 @@ def scrape_to_db():
             DISPOSITION (which I guess is status)
         ]
     """
-    if not current_app.get("BING_MAPS_KEY"):
-        raise BingKeyNotFound()
 
     # Interesting thing about springdale. It's a .txt extension, but it's in JSON format
     # Also, regardless of parameters, only the past 24 hours are shown.

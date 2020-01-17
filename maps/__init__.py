@@ -26,9 +26,9 @@ app.config.from_object(config)
 app.config.from_pyfile(os.path.join(current_dir, '../', 'instance', 'config.py'))
 
 # If a sentry URL exists, enable sentry error reporting
-if app.config.get('SENTRY_DSN'):
+if app.config.get('MAPS_SENTRY_DSN'):
     sentry_sdk.init(
-        dsn=app.config['SENTRY_DSN'],
+        dsn=app.config['MAPS_SENTRY_DSN'],
         integrations=[FlaskIntegration(), SqlalchemyIntegration()]
     )
 

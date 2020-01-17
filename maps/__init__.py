@@ -23,7 +23,7 @@ app = Flask(__name__, static_folder='static', static_url_path='/static',
             template_folder='templates', instance_relative_config=True)
 app.config.from_object(config)
 # Doing it manually, because apache can mess with working dir
-app.config.from_pyfile(os.path.join('../', current_dir, 'instance', 'config.py'))
+app.config.from_pyfile(os.path.join(current_dir, '../', 'instance', 'config.py'))
 
 # If a sentry URL exists, enable sentry error reporting
 if app.config.get('SENTRY_DSN'):

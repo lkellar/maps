@@ -50,6 +50,12 @@ or
 
 The above command would scrape 15 days.
 
+### Available Commands
+The following scraping commands are available for use with the cli. (All commands are prefixed with calling the cli module)
+
+- `scrape fay [days]` : Scrape Fayetteville calls, and control how many days to scrape back with the days param (int)
+- `scrape spr` : Scrape the past 24 hours of Springdale calls
+
 # Supported Cities
 - Fayetteville, Arkansas
 - Springdale, Arkansas (note: doesn't support historical scraping)

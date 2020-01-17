@@ -59,7 +59,7 @@ const CALL_TYPES = {
     "ABUSE": [colors.HAZARD, icons.EXCLAMATION],
     "ACCIDENT": [colors.HAZARD, icons.CRASH],
     "ACCIDENT HIT AND RUN": [colors.DANGER, icons.CRASH],
-    "ACCIDENT - PRIVATE PROPERTY": [colors.DANGER, icons.CRASH],
+    "ACCIDENT - PRIVATE PROPERTY": [colors.HAZARD, icons.CRASH],
     "ALARM": [colors.GENERAL, icons.EXCLAMATION],
     "ANIMAL CALL": [colors.WARNING, icons.CAT],
     "ANNOYANCE": [colors.HAZARD, icons.EXCLAMATION],
@@ -245,17 +245,16 @@ function displayMap(data, filter=null) {
                     let time_ago = timeSince(datetime);
                     let dt_string = datetime.toLocaleString(DateTime.DATETIME_SHORT);
 
-                    let popupText = `${call["call_type"]} <br> ${call["address"]} <br> ${call["city"]}`
+                    let popupText = `${call["call_type"]}<br>${call["address"]}<br>${call["city"]}`;
                     if (call["notes"]) {
-                        popupText += `<br> ${call["notes"]}`
+                        popupText += `<br>${call["notes"]}`;
                     }
-                    popupText += ` <br> ${dt_string} (${time_ago} ago)`
+                    popupText += `<br>${dt_string} (${time_ago} ago)`;
 
                     let marker = L.marker(latlon, {
                         icon: myIcon,
                         timestamp: call["timestamp"]
-                    }).bindPopup(popupText)
-                        .openPopup();
+                    }).bindPopup(popupText).openPopup();
 
                     markers.addLayer(marker);
                 }

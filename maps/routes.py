@@ -6,6 +6,7 @@ from flask import render_template, jsonify
 from maps import app
 from maps.models import Call
 
+
 @app.route('/')
 def index():
     return render_template('index.html')

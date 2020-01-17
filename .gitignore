@@ -238,3 +238,4 @@ gen
 *.sqlite
 *.wsgi
 *.sketch
+*.paw

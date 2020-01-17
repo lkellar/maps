@@ -1,11 +1,10 @@
 """
 Define routes.
 """
-
-from flask import render_template, flash, redirect, url_for, request, jsonify
-from maps import app, db
-from maps.models import Call
 from datetime import datetime, timedelta
+from flask import render_template, jsonify
+from maps import app
+from maps.models import Call
 
 
 @app.route('/')

@@ -11,6 +11,7 @@ flask = "*"
 requests = "*"
 pytz = "*"
 flask-sqlalchemy = "*"
+sentry-sdk = {extras = ["flask", "sqlalchemy"],version = "*"}
 
 [requires]
 python_version = "3.7"

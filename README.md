@@ -24,9 +24,21 @@ which will scrape 911 calls for the past 30 days. Read the [Scraper documentatio
 Once you've scraped the data, go ahead and start the flask server, which resides in the run.py file.
 
 #### Configuration
+The following vars need to be put in a `config.py` file inside an `instance` dir in the root of the repo dir. 
+
 - `BING_MAPS_KEY`: An API key for the [Bing Maps Geocode Dataflow API](https://docs.microsoft.com/en-us/bingmaps/spatial-data-services/geocode-dataflow-api/). It's required for cities like Springdale which don't provide coordinates.
 
 - `MAPS_SENTRY_DSN`: A DSN for Sentry. If provided, Sentry error reporting is setup.
+
+An example would look like this
+```python
+# An API key for the Bing Maps Geocode Dataflow API.
+# It's required for cities like Springdale which don't provide coordinates.
+BING_MAPS_KEY = "1232134234234242fdsfsfsf
+
+# A DSN for sentry. If provided, sentry error reporting is set up.
+MAPS_SENTRY_DSN = "123123@sentry.io/32423432
+```
 
 
 ## Website

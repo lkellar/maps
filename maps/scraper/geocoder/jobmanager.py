@@ -42,14 +42,15 @@ class Result:
         values = list(filter(None, values))
 
         # Set properties in order (result follows heading schema)
-        self.id, self.address, self.city, self.state, self.country, self.lat, self.lon = values
+        # Zipcode will be inaccurate most likely, pls ignore it
+        self.id, self.address, self.zipcode, self.state, self.country, self.lat, self.lon, self.city = values
 
         self.coord = (self.lat, self.lon)
 
 
-def format_address(id_, address, city='Springdale', state='AR', country='US'):
+def format_address(id_, address, zipcode=72764, state='AR', country='US'):
     """ Format geocode request body according to our Geocode Dataflow heading """
-    return f'{id_}|{address}|{city}|{state}|{country}'
+    return f'{id_}|{address}|{zipcode}|{state}|{country}'
 
 
 # ------------------------------ JOB MANAGER ------------------------------
@@ -60,7 +61,7 @@ class JobManager:
         self.completed_url = None
 
         self.results: [Result] = []
-        self.address_to_coord = {}
+        self.address_to_geocode = {}
 
     def create(self, addresses):
         """
@@ -129,5 +130,5 @@ class JobManager:
         for row in rows:
             result = Result(row)
             self.results.append(result)
-            self.address_to_coord[result.address] = result.coord
+            self.address_to_geocode[result.address] = {'coord': result.coord, 'city': result.city}
 

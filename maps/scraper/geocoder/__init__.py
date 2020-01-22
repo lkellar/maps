@@ -43,4 +43,4 @@ def geocode_lookup(addresses: [str]) -> dict:
         # Fetch job results
         job_manager.fetch_results()
 
-    return job_manager.address_to_coord
+    return job_manager.address_to_geocode

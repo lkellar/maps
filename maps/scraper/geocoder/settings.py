@@ -23,13 +23,14 @@ class GeocodeDataflow:
         # Define input fields for our geo-coding request
         'Id',
         'GeocodeRequest/Address/AddressLine',  # address
-        'GeocodeRequest/Address/Locality',  # city
+        'GeocodeRequest/Address/PostalCode',  # Zip Code
         'GeocodeRequest/Address/AdminDistrict',  # state
         'GeocodeRequest/Address/CountryRegion',  # country
 
         # Define Response fields latitude and longitude
         'GeocodeResponse/Point/Latitude',
-        'GeocodeResponse/Point/Longitude'
+        'GeocodeResponse/Point/Longitude',
+        'GeocodeResponse/Address/Locality' # City
     )
     # Generate our schema for geo-coding requests and responses to the Dataflow API
     HEADING = 'Bing Spatial Data Services, 2.0\n' + '|'.join(FIELDS)

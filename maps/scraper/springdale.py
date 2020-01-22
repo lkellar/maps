@@ -13,14 +13,16 @@ SPRINGDALE_TZ = pytz.timezone('America/Chicago')
 
 def geocode_calls(calls):
     addresses = [call.address for call in calls]
-    address_to_coord = geocode_lookup(addresses)
+    address_to_geocode = geocode_lookup(addresses)
 
     for call in calls:
         # Lookup the coordinates for the address from our response
-        lat, lon = address_to_coord[call.address]
+        result = address_to_geocode[call.address]
+        lat, lon = result['coord']
 
         call.lat = lat
         call.lon = lon
+        call.city = result['city']
 
     return calls
 

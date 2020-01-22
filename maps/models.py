@@ -3,7 +3,6 @@ Define SQLAlchemy models for the database.
 """
 # pylint: disable=no-member, too-many-arguments
 
-from datetime import datetime
 from maps import db
 
 
@@ -55,6 +54,4 @@ class CallQuery:
     def get_existing_springdale(call):
         """ Return a call if it exists in the db already """
         return db.session.query(Call).filter_by(
-            timestamp=call.timestamp, address=call.address, call_type=call.call_type, city=call.city
-        ).scalar()
-
+            timestamp=call.timestamp, address=call.address, call_type=call.call_type).scalar()

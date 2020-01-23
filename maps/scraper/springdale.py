@@ -2,6 +2,8 @@ from datetime import datetime
 import requests
 import pytz
 
+from sqlalchemy.exc import IntegrityError
+
 from maps import db
 from maps.models import Call, CallQuery
 from maps.scraper.geocoder import geocode_lookup
@@ -69,7 +71,14 @@ def scrape_to_db():
         new_calls = geocode_calls(new_calls)
 
         for call in new_calls:
-            db.session.merge(call)
+            try:
+                db.session.merge(call)
+            except IntegrityError:
+                existing_call = CallQuery.get_existing_springdale(call)
+                if existing_call:
+                    existing_call.notes = disposition
+                else:
+                    raise Exception(f'Call {call} was given unique constraint error, but it can\'t be found in the db')
 
         # Commit new calls
         db.session.commit()

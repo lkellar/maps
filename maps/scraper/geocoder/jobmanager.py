@@ -88,7 +88,7 @@ class JobManager:
                            data=input_data)
         response_json = res.json()
 
-        if response_json['statusCode'] == '400':
+        if int(response_json['statusCode']) >= 400:
             # if there's an error creating the job, raise an error! Yay
             raise BingAPIError(response_json['errorDetails'])
 

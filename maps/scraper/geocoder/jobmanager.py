@@ -130,5 +130,5 @@ class JobManager:
         for row in rows:
             result = Result(row)
             self.results.append(result)
-            self.address_to_geocode[result.address] = {'coord': result.coord, 'city': result.city}
+            self.address_to_geocode[result.address] = {'coord': result.coord, 'city': result.city.rstrip('\r')}
 

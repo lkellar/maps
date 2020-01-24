@@ -2,7 +2,7 @@ from datetime import datetime
 import requests
 import pytz
 
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, InvalidRequestError
 
 from maps import db
 from maps.models import Call, CallQuery
@@ -73,7 +73,7 @@ def scrape_to_db():
         for call in new_calls:
             try:
                 db.session.merge(call)
-            except IntegrityError:
+            except (IntegrityError, InvalidRequestError):
                 existing_call = CallQuery.get_existing_springdale(call)
                 if existing_call:
                     existing_call.notes = disposition

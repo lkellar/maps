@@ -10,7 +10,7 @@ import time
 
 from .jobmanager import JobManager
 from .settings import GeocodeDataflow
-from .exceptions import BingKeyNotFound
+from .exceptions import BingKeyNotFound, BingStallError
 
 
 # ------------------------------ GEO-CODING FUNCTIONS ------------------------------
@@ -37,8 +37,13 @@ def geocode_lookup(addresses: [str]) -> dict:
         # Start a job
         job_manager.create(batch)
         # Wait for job completion
+        iterations = 0
         while not job_manager.check_completed():
             time.sleep(5)
+            iterations += 1
+            # After 10 mins, give up
+            if iterations > 120:
+                raise BingStallError('It stalled, we waited 10 minutes')
 
         # Fetch job results
         job_manager.fetch_results()

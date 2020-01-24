@@ -5,7 +5,7 @@ See API documentation:
 """
 import requests
 
-from .exceptions import BingAPIError
+from .exceptions import BingAPIError, BingStallError
 from .settings import GeocodeDataflow, KEY_PARAMS
 
 
@@ -90,6 +90,9 @@ class JobManager:
 
         if int(response_json['statusCode']) >= 400:
             # if there's an error creating the job, raise an error! Yay
+            if response_json['errorDetails'] == "JobUsageQuota: Account already has 3 'Pending' jobs":
+                raise BingStallError(response_json['errorDetails'])
+
             raise BingAPIError(response_json['errorDetails'])
 
         # Get job's id so we can check its status and get result
@@ -131,4 +134,3 @@ class JobManager:
             result = Result(row)
             self.results.append(result)
             self.address_to_geocode[result.address] = {'coord': result.coord, 'city': result.city.rstrip('\r')}
-

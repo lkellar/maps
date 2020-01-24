@@ -6,7 +6,8 @@ from sqlalchemy.exc import IntegrityError, InvalidRequestError
 
 from maps import db
 from maps.models import Call, CallQuery
-from maps.scraper.geocoder import geocode_lookup
+from .geocoder import geocode_lookup
+from .geocoder.exceptions import BingStallError
 from maps.scraper.base import convert_naive_utc
 
 
@@ -66,22 +67,27 @@ def scrape_to_db():
     # Commit updates to calls
     db.session.commit()
 
-    if new_calls:
-        # Add lat/lon to calls using the geocoder
-        new_calls = geocode_calls(new_calls)
+    try:
+        if new_calls:
+            # Add lat/lon to calls using the geocoder
+            new_calls = geocode_calls(new_calls)
 
-        for call in new_calls:
-            try:
-                db.session.merge(call)
-            except (IntegrityError, InvalidRequestError):
-                existing_call = CallQuery.get_existing_springdale(call)
-                if existing_call:
-                    existing_call.notes = disposition
-                else:
-                    raise Exception(f'Call {call} was given unique constraint error, but it can\'t be found in the db')
+            for call in new_calls:
+                try:
+                    db.session.merge(call)
+                except (IntegrityError, InvalidRequestError):
+                    existing_call = CallQuery.get_existing_springdale(call)
+                    if existing_call:
+                        existing_call.notes = disposition
+                    else:
+                        raise Exception(f'Call {call} was given unique constraint error, but it can\'t be found in the db')
 
-        # Commit new calls
-        db.session.commit()
+            # Commit new calls
+            db.session.commit()
+
+    except BingStallError:
+        # IF the bing is stalling again, and we have 3 pending jobs, just stop and come back later
+        pass
 
 
 def generate_timestamp(month_day: str) -> datetime:

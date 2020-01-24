@@ -90,7 +90,7 @@ class JobManager:
 
         if int(response_json['statusCode']) >= 400:
             # if there's an error creating the job, raise an error! Yay
-            if response_json['errorDetails'] == "JobUsageQuota: Account already has 3 'Pending' jobs":
+            if "JobUsageQuota: Account already has 3 'Pending' jobs" in response_json['errorDetails']:
                 raise BingStallError(response_json['errorDetails'])
 
             raise BingAPIError(response_json['errorDetails'])

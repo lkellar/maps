@@ -4,8 +4,9 @@ See API documentation:
     https://docs.microsoft.com/en-us/bingmaps/spatial-data-services/geocode-dataflow-api/
 """
 import requests
+import time
 
-from .exceptions import BingAPIError, BingStallError
+from .exceptions import BingAPIError, BingStallError, BingTimeoutError
 from .settings import GeocodeDataflow, KEY_PARAMS
 
 
@@ -44,8 +45,6 @@ class Result:
         # Set properties in order (result follows heading schema)
         # Zipcode will be inaccurate most likely, pls ignore it
         self.id, self.address, self.zipcode, self.state, self.country, self.lat, self.lon, self.city = values
-
-        self.coord = (self.lat, self.lon)
 
 
 def format_address(id_, address, zipcode=72764, state='AR', country='US'):
@@ -88,8 +87,8 @@ class JobManager:
                            data=input_data)
         response_json = res.json()
 
+        # if there's an error creating the job, raise an error
         if int(response_json['statusCode']) >= 400:
-            # if there's an error creating the job, raise an error! Yay
             if "JobUsageQuota: Account already has 3 'Pending' jobs" in response_json['errorDetails']:
                 raise BingStallError(response_json['errorDetails'])
 
@@ -109,11 +108,30 @@ class JobManager:
 
         # Extract status of job from json
         status = response_json['resourceSets'][0]['resources'][0]['status']
+
+        if status == 'Aborted':
+            raise BingAPIError("Job was aborted due to an error.")
         if status == 'Completed':
             # If completed, get url to results
             self.completed_url = response_json['resourceSets'][0]['resources'][0]['links'][1]['url']
             return True
         return False
+
+    def wait_for_completion(self, timeout=600):
+        """
+        Wait for job completion
+        :param timeout: minimum number of seconds to wait before timing out
+        """
+        total = 0
+        s = 5
+        while not self.check_completed():
+            # Give up after certain amount of time
+            if total > timeout:
+                raise BingTimeoutError(f'Job failed to complete after {total} seconds')
+
+            time.sleep(s)  # Get status every s seconds
+            total += s
+            s += 1  # Increase interval over time so we make less requests
 
     def fetch_results(self):
         """ Fetch results of completed job and process results to dictionary of addresses -> (lat, lon) """
@@ -133,4 +151,5 @@ class JobManager:
         for row in rows:
             result = Result(row)
             self.results.append(result)
-            self.address_to_geocode[result.address] = {'coord': result.coord, 'city': result.city.rstrip('\r')}
+            self.address_to_geocode[result.address] = {'lat': result.lat, 'lon': result.lon,
+                                                       'city': result.city.rstrip('\r')}

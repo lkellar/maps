@@ -44,14 +44,14 @@ class CallQuery:
     """ Custom queries for calls table """
 
     @staticmethod
-    def get_existing_fayetteville(call):
-        """ Return a call if it exists in the db already """
+    def get_existing_with_latlon(call):
+        """ Return a call if it exists in the db already, using lat/lon to verify same location """
         return db.session.query(Call).filter_by(
             timestamp=call.timestamp, lat=call.lat, lon=call.lon, call_type=call.call_type,
         ).scalar()
 
     @staticmethod
-    def get_existing_springdale(call):
-        """ Return a call if it exists in the db already """
+    def get_existing_with_address(call):
+        """ Return a call if it exists in the db already, using address to verify same location """
         return db.session.query(Call).filter_by(
             timestamp=call.timestamp, address=call.address, call_type=call.call_type).scalar()

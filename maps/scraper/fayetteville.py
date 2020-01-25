@@ -15,6 +15,10 @@ def format_date(dt: datetime):
     return dt.strftime("%Y-%m-%d")
 
 
+def is_invalid(call):
+    return (call.lat, call.lon) == (-361, -361) or call.address == "<UNKNOWN>" or call.city is None
+
+
 def scrape_to_db(start: datetime, end: datetime):
     """
     Scrape Fayetteville calls and insert into the DB
@@ -29,12 +33,12 @@ def scrape_to_db(start: datetime, end: datetime):
     for row in response_json:
         # Generate call object from json data
         call = create_call(row)
-        # If coordinates are not specified, we don't want to insert the call
-        if (call.lat, call.lon) != (-361, -361):
-            existing_call = CallQuery.get_existing_fayetteville(call)
+        # If coordinates or address or city are not specified, we don't want to insert the call
+        if not is_invalid(call):
+            # Check for existing call using lat/lon as location, rather than address, which may be unspecified?
+            existing_call = CallQuery.get_existing_with_latlon(call)
             if existing_call:
-                # If call already exists, update the existing call
-                call.id = existing_call.id
+                call.id = existing_call.id  # If call already exists, update the existing call
             db.session.merge(call)
     db.session.commit()
 

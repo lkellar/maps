@@ -30,7 +30,7 @@ class GeocodeDataflow:
         # Define Response fields latitude and longitude
         'GeocodeResponse/Point/Latitude',
         'GeocodeResponse/Point/Longitude',
-        'GeocodeResponse/Address/Locality' # City
+        'GeocodeResponse/Address/Locality'  # City
     )
     # Generate our schema for geo-coding requests and responses to the Dataflow API
     HEADING = 'Bing Spatial Data Services, 2.0\n' + '|'.join(FIELDS)

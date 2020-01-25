@@ -6,7 +6,6 @@ Why Bing?
     Bing also has a not-for-profit plan, which has much higher limits for free
 """
 from flask import current_app
-import time
 
 from .jobmanager import JobManager
 from .settings import GeocodeDataflow
@@ -18,7 +17,7 @@ from .exceptions import BingKeyNotFound, BingStallError
 
 def geocode_lookup(addresses: [str]) -> dict:
     """
-    This function uses Bing's geocodeLookup service to get lat/long from addresses.
+    This function uses Bing's geocodeLookup service to get lat/lon and city from addresses.
 
     :param addresses: List of all the addresses to geocode.
     :return: a dict of addresses -> (lat, lon)
@@ -37,13 +36,7 @@ def geocode_lookup(addresses: [str]) -> dict:
         # Start a job
         job_manager.create(batch)
         # Wait for job completion
-        iterations = 0
-        while not job_manager.check_completed():
-            time.sleep(5)
-            iterations += 1
-            # After 10 mins, give up
-            if iterations > 120:
-                raise BingStallError('It stalled, we waited 10 minutes')
+        job_manager.wait_for_completion()
 
         # Fetch job results
         job_manager.fetch_results()

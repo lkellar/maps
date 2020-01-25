@@ -2,12 +2,10 @@ from datetime import datetime
 import requests
 import pytz
 
-from sqlalchemy.exc import IntegrityError, InvalidRequestError
-
 from maps import db
 from maps.models import Call, CallQuery
 from .geocoder import geocode_lookup
-from .geocoder.exceptions import BingStallError
+from .geocoder.exceptions import BingStallError, BingTimeoutError
 from maps.scraper.base import convert_naive_utc
 
 
@@ -15,16 +13,14 @@ SPRINGDALE_TZ = pytz.timezone('America/Chicago')
 
 
 def geocode_calls(calls):
-    addresses = [call.address for call in calls]
+    addresses = list(set(call.address for call in calls))
     address_to_geocode = geocode_lookup(addresses)
 
     for call in calls:
         # Lookup the coordinates for the address from our response
         result = address_to_geocode[call.address]
-        lat, lon = result['coord']
-
-        call.lat = lat
-        call.lon = lon
+        call.lat = float(result['lat'])
+        call.lon = float(result['lon'])
         call.city = result['city']
 
     return calls
@@ -43,22 +39,23 @@ def scrape_to_db():
         ]
     """
 
-    # Interesting thing about springdale. It's a .txt extension, but it's in JSON format
+    # The Springdale data source is a .txt extension, but it's in JSON format
     # Also, regardless of parameters, only the past 24 hours are shown.
     response_json = requests.get('https://ww2.springdalear.gov/web_includes/dispatch_logs.txt').json()
 
     new_calls = []
     for item in response_json['demo']:
         month_day, call_type, address, disposition = item
-        if address:
+        if address:  # we can only use call data that includes address
             timestamp = generate_timestamp(month_day)
-            call = Call(timestamp=timestamp, address=address, city='Springdale',
-                        call_type=call_type, notes=disposition)
-            existing_call = CallQuery.get_existing_springdale(call)
+            call = Call(timestamp=timestamp, address=address, call_type=call_type, notes=disposition)
+
+            # Check for existing call using address as location, because we don't have lat/lon
+            existing_call = CallQuery.get_existing_with_address(call)
 
             # If call already exists
             if existing_call:
-                # Update notes field on existing call
+                # Update notes field on existing call (this field could change)
                 existing_call.notes = disposition
             else:
                 # Else, create new call
@@ -67,27 +64,20 @@ def scrape_to_db():
     # Commit updates to calls
     db.session.commit()
 
-    try:
-        if new_calls:
-            # Add lat/lon to calls using the geocoder
+    if new_calls:
+        try:
+            # Add lat/lon and city to calls using the geo-coder
             new_calls = geocode_calls(new_calls)
+        except (BingStallError, BingTimeoutError):
+            # If bing is stalling (we have 3 pending jobs) or our job takes too long to complete,
+            # just stop and come back later
+            return
 
-            for call in new_calls:
-                try:
-                    db.session.merge(call)
-                except (IntegrityError, InvalidRequestError):
-                    existing_call = CallQuery.get_existing_springdale(call)
-                    if existing_call:
-                        existing_call.notes = disposition
-                    else:
-                        raise Exception(f'Call {call} was given unique constraint error, but it can\'t be found in the db')
+        for call in new_calls:
+            db.session.merge(call)
 
-            # Commit new calls
-            db.session.commit()
-
-    except BingStallError:
-        # IF the bing is stalling again, and we have 3 pending jobs, just stop and come back later
-        pass
+        # Commit new calls
+        db.session.commit()
 
 
 def generate_timestamp(month_day: str) -> datetime:

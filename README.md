@@ -34,10 +34,10 @@ An example would look like this
 ```python
 # An API key for the Bing Maps Geocode Dataflow API.
 # It's required for cities like Springdale which don't provide coordinates.
-BING_MAPS_KEY = "1232134234234242fdsfsfsf
+BING_MAPS_KEY = "1232134234234242fdsfsfsf"
 
 # A DSN for sentry. If provided, sentry error reporting is set up.
-MAPS_SENTRY_DSN = "123123@sentry.io/32423432
+MAPS_SENTRY_DSN = "123123@sentry.io/32423432"
 ```
 
 

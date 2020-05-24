@@ -34,4 +34,3 @@ class GeocodeDataflow:
     )
     # Generate our schema for geo-coding requests and responses to the Dataflow API
     HEADING = 'Bing Spatial Data Services, 2.0\n' + '|'.join(FIELDS)
-

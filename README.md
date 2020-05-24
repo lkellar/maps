@@ -67,7 +67,9 @@ The following scraping commands are available for use with the cli. (All command
 
 - `scrape fay [days]` : Scrape Fayetteville calls, and control how many days to scrape back with the days param (int)
 - `scrape spr` : Scrape the past 24 hours of Springdale calls
+- `scrape wash`: Scrape the past few days of Washington County calls
 
-# Supported Cities
+# Supported Regions
 - Fayetteville, Arkansas
 - Springdale, Arkansas (note: doesn't support historical scraping)
+- Washington County, Arkansas (also doesn't support historical scraping)

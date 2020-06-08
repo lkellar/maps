@@ -24,14 +24,19 @@
     </div>
     <div id="control-panel">
         <label for="selectDaysAgo">Date range: </label>
-        <select id="selectDaysAgo" onchange="main()">
-            <option value=".5" selected>Past 12 hours</option>
+        <select id="selectDaysAgo" onchange="main()" onkeypress="main()">
+            <option value=".5">Past 12 hours</option>
             <option value="1" selected>Past 24 hours</option>
             <option value="2">Past two days</option>
             <option value="3">Past three days</option>
             <option value="7">Past week</option>
             <option value="30">Past month</option>
+            <option value="custom">Custom Date Range</option>
         </select>
+        <span style="display: none" id="datepicker">
+            <input name="start" id="start" type="date" oninput="main()"/>
+            <input name="end" id="end" type="date" oninput="main()" />
+        </span>
         <div class="checkBoxContainer">
             <label for="general">General</label>
             <input type="checkbox" id="general" name="general" value="General" checked onchange="main()">
@@ -52,5 +57,4 @@
 </body>
 
 <script src="{{ url_for('static', filename='map.js') }}"></script>
-
 </html>

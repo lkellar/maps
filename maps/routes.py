@@ -2,6 +2,7 @@
 Define routes.
 """
 from datetime import datetime, timedelta
+import pytz
 from flask import render_template, jsonify
 from maps import app
 from maps.models import Call
@@ -21,6 +22,18 @@ def fetch_days(days=1):
     start = now - timedelta(days=days)
 
     data = Call.query.filter(Call.timestamp.between(start, now)).all()
+
+    # Convert all the call objects to dict
+    return jsonify([i.serialize for i in data])
+
+@app.route('/fetch/<start>/<end>')
+def fetch_date_range(start, end):
+    timezone = app.config['TIMEZONE']
+
+    start = timezone.localize(datetime.strptime(start, '%Y-%m-%d')).astimezone(pytz.UTC)
+    end = timezone.localize(datetime.strptime(end, '%Y-%m-%d')).astimezone(pytz.UTC)
+
+    data = Call.query.filter(Call.timestamp.between(start, end)).all()
 
     # Convert all the call objects to dict
     return jsonify([i.serialize for i in data])

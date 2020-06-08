@@ -278,6 +278,44 @@ let data;
 let markers;
 let map;
 
+function validateDateInputs() {
+    start = document.getElementById('start').value;
+    end = document.getElementById('end').value;
+
+    if (start === '') {
+        // If empty, set placeholder
+        document.getElementById('start').placeholder = new Date(new Date().getTime() - 8640000).toISOString().split('T')[0];
+        return false;
+    } else if ( !start.match(/^\d{4}-[01]\d-[0-3]\d$/)) {
+        // If invalid date, make it red and return false
+        document.getElementById('start').style.color = 'red';
+        return false;
+    }
+
+    if (end === '') {
+        document.getElementById('end').placeholder = new Date().toISOString().split('T')[0];
+        return false;
+    } else if (!end.match(/^\d{4}-[01]\d-[0-3]\d$/)) {
+        document.getElementById('end').style.color = 'red';
+        return false;
+    }
+
+    if (Date.parse(end) - Date.parse(start) < 0) {
+
+        // If start after end, make both red
+        
+        document.getElementById('start').style.color = 'red';
+        document.getElementById('end').style.color = 'red';
+        return false;
+    }
+
+    // Both good, make them both black
+    document.getElementById('start').style.color = 'black';
+    document.getElementById('end').style.color = 'black';
+
+    return true;
+}
+
 async function main() {
     let filter = [];
     if (document.getElementById("general").checked)
@@ -296,13 +334,32 @@ async function main() {
     let daysAgo = document.getElementById("selectDaysAgo");
     daysAgo = daysAgo.options[daysAgo.selectedIndex].value;
 
-    data = await fetch(`fetch/${daysAgo}`)
+    if (daysAgo === 'custom') {
+        document.getElementById('datepicker').style.display = 'inherit';
+        if (!validateDateInputs()) {
+            return;
+        }
+
+        start = document.getElementById('start').value;
+        end = document.getElementById('end').value;
+
+        data = await fetch(`fetch/${start}/${end}`)
         .then(response => {
-            return response.json()
+            return response.json();
         })
         .catch(err => {
-            console.log(err)
+            console.log(err);
         });
+    } else {
+        document.getElementById('datepicker').style.display = 'none';
+        data = await fetch(`fetch/${daysAgo}`)
+        .then(response => {
+            return response.json();
+        })
+        .catch(err => {
+            console.log(err);
+        });
+    }
 
     if (map == null) initMap();
     else {
@@ -311,5 +368,8 @@ async function main() {
     displayMap(data, filter);
 }
 
+// set defaults
+document.getElementById('start').value = new Date(new Date().getTime() - 86400000).toISOString().split('T')[0];
+document.getElementById('end').value = new Date().toISOString().split('T')[0];
 
 main();

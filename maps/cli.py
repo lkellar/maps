@@ -26,6 +26,12 @@ def register(cli):
             from maps.scraper import scrape_springdale
             scrape_springdale()
 
+    @scrape.command()
+    def wash():
+        with app.app_context():
+            from maps.scraper import scrape_washington
+            scrape_washington()
+
 
 if __name__ == '__main__':
     @click.group()

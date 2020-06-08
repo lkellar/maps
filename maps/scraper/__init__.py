@@ -3,6 +3,7 @@ from flask import current_app
 
 import maps.scraper.fayetteville as fayetteville
 import maps.scraper.springdale as springdale
+import maps.scraper.washington as washington
 
 
 def scrape_fayetteville(days):
@@ -18,3 +19,11 @@ def scrape_springdale():
     else:
         print('No Bing Maps Key, so no springdale for you')
 
+
+def scrape_washington():
+    # ONLY DO IT IF WE HAVE BING MAPS KEY
+    if current_app.config.get('BING_MAPS_KEY'):
+        # Washington doesn't do dates, they only give past few days
+        washington.scrape_to_db()
+    else:
+        print('No Bing Maps Key, so no washington for you')

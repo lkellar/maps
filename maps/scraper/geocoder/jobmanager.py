@@ -3,8 +3,8 @@ Class to encapsulate geo-coding jobs in the Geocode Dataflow API.
 See API documentation:
     https://docs.microsoft.com/en-us/bingmaps/spatial-data-services/geocode-dataflow-api/
 """
-import requests
 import time
+import requests
 
 from .exceptions import BingAPIError, BingStallError, BingTimeoutError
 from .settings import GeocodeDataflow, KEY_PARAMS

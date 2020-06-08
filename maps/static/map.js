@@ -22,6 +22,7 @@ const icons = {
     BIOHAZARD: "fa-biohazard",
     BED: "fa-bed",
     CAT: "fa-cat",
+    DOG: "fa-dog",
     RUNNING: "fa-running",
     WALKING: "fa-walking",
     TRAFFIC: "fa-traffic-light",
@@ -61,7 +62,10 @@ const CALL_TYPES = {
     "ACCIDENT HIT AND RUN": [colors.DANGER, icons.CRASH],
     "ACCIDENT - PRIVATE PROPERTY": [colors.HAZARD, icons.CRASH],
     "ALARM": [colors.GENERAL, icons.EXCLAMATION],
+    "ANIMAL BITE": [colors.WARNING, icons.CAT],
     "ANIMAL CALL": [colors.WARNING, icons.CAT],
+    "ANIMAL COMPLAINT": [colors.WARNING, icons.CAT],
+    "ANIMAL STRAY DOG": [colors.WARNING, icons.DOG],
     "ANNOYANCE": [colors.HAZARD, icons.EXCLAMATION],
     "ARMED PERSON": [colors.DANGER, icons.PERSON],
     "ASSAULT BATTERY": [colors.DANGER, icons.INJURED],
@@ -146,10 +150,12 @@ const CALL_TYPES = {
     "MENTAL PERSON": [colors.HAZARD, icons.PERSON],
     "MISSING PERSON": [colors.WARNING, icons.PERSON],
     "NOISE": [colors.WARNING, icons.NOISE],
+    "NOISE COMPLAINT": [colors.WARNING, icons.NOISE],
     "PARKING PROBLEM": [colors.HAZARD, icons.CAR],
     "PROSTITUTION": [colors.WARNING, icons.EXCLAMATION],
     "PROWLER": [colors.HAZARD, icons.SECRET],
     "RECKLESS": [colors.DANGER, icons.EXCLAMATION],
+    "RECKLESS DRIVER": [colors.DANGER, icons.EXCLAMATION],
     "RECOVERY REPORT": null,
     "ROBBERY": [colors.DANGER, icons.MASK],
     "SAFETY CK OF PREMISES": [colors.WARNING, icons.PERSON],
@@ -168,11 +174,13 @@ const CALL_TYPES = {
     "TRAFFIC COMPL": [colors.GENERAL, icons.TRAFFIC],  // traffic complaint
     "TRAFFIC CONTROL": [colors.GENERAL, icons.TRAFFIC],
     "TRAFFIC HAZARD": [colors.WARNING, icons.TRAFFIC],
+    "TRAFFIC HAZARD-LIVESTOCK": [colors.WARNING, icons.TRAFFIC],
     "TRAFFIC LIGHT MALFUNCTION": [colors.WARNING, icons.TRAFFIC],
     "TFC LIGHT PROBLEM": [colors.WARNING, icons.TRAFFIC],
     "TRAFFIC STOP": [colors.WARNING, icons.TRAFFIC],
     "TRANSPORT": [colors.GENERAL, icons.CAR],
     "TRESPASSING": [colors.HAZARD, icons.WALKING],
+    "TRESPASSING-IN PROGESS": [colors.HAZARD, icons.WALKING],
     "UNLOCK": null,
     "UNAUTHORIZED USE VEHICLE": [colors.HAZARD, icons.CAR],
     "VEHICLE RECOVERY": [colors.WARNING, icons.CAR],
@@ -247,7 +255,7 @@ function displayMap(data, filter=null) {
 
                     let popupText = `${call["call_type"]}<br>${call["address"]}<br>${call["city"]}`;
                     if (call["notes"]) {
-                        popupText += `<br>${call["notes"]}`;
+                        popupText += `<br>${call["notes"].replace('\n', '<br>')}`;
                     }
                     popupText += `<br>${dt_string} (${time_ago} ago)`;
 

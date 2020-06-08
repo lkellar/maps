@@ -14,12 +14,12 @@ from .geocoder import geocode_lookup
 WASHINGTON_TZ = pytz.timezone('America/Chicago')
 
 def geocode_calls(calls: [Call]):
-    addresses = list(set(call.address for call in calls))
+    addresses = list(set(call.address.strip() for call in calls))
     address_to_geocode = geocode_lookup(addresses)
 
     for call in calls:
         # Lookup the coordinates for the address from our response
-        result = address_to_geocode[call.address]
+        result = address_to_geocode[call.address.strip()]
         call.lat = float(result['lat'])
         call.lon = float(result['lon'])
         call.city = result['city']

@@ -13,6 +13,7 @@ from .geocoder import geocode_lookup
 
 WASHINGTON_TZ = pytz.timezone('America/Chicago')
 
+
 def geocode_calls(calls: [Call]):
     addresses = list(set(call.address.strip() for call in calls))
     address_to_geocode = geocode_lookup(addresses)
@@ -26,13 +27,14 @@ def geocode_calls(calls: [Call]):
 
     return calls
 
+
 def scrape_to_db():
-    '''
+    """
     Function to scrape calls from Washington County's source and insert them into the DB
 
     Washington County's response objects have the following schema:
         CallNumber, CaseNumber, Date, Time, Assist, Location (Address), City
-    '''
+    """
 
     response = requests.get('https://www.so.washington.ar.us/res/callsforservice.aspx').text
 
@@ -117,12 +119,12 @@ def scrape_to_db():
 
 
 def generate_timestamp(date: str, time: str) -> datetime:
-    '''
+    """
     Take a date and time and creat a timestamp out of it
     :param date: string following format %m/%d/%Y
     :param time: string following format HH:MM AM/PM
     :return utc datetime object
-    '''
+    """
 
     # Convert to datetime
     timestamp = datetime.strptime(f'{date} {time}', '%m/%d/%Y %H:%M %p')

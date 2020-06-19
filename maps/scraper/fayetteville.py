@@ -4,7 +4,7 @@ import pytz
 
 from maps.models import Call, CallQuery
 from maps import db
-from .base import *
+from maps.util import convert_naive_utc
 
 
 FAYETTEVILLE_TZ = pytz.timezone('America/Chicago')

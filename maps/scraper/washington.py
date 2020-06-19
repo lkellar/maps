@@ -6,7 +6,7 @@ import pytz
 
 from maps import db
 from maps.models import Call, CallQuery
-from maps.scraper.base import convert_naive_utc
+from maps.util import convert_naive_utc
 
 from .geocoder.exceptions import BingStallError, BingTimeoutError
 from .geocoder import geocode_lookup

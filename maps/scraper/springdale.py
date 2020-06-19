@@ -6,7 +6,7 @@ from maps import db
 from maps.models import Call, CallQuery
 from .geocoder import geocode_lookup
 from .geocoder.exceptions import BingStallError, BingTimeoutError
-from maps.scraper.base import convert_naive_utc
+from maps.util import convert_naive_utc
 
 
 SPRINGDALE_TZ = pytz.timezone('America/Chicago')

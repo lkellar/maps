@@ -278,25 +278,28 @@ let data;
 let markers;
 let map;
 
+const startElement = document.getElementById('start');
+const endElement = document.getElementById('end');
+
 function validateDateInputs() {
-    start = document.getElementById('start').value;
-    end = document.getElementById('end').value;
+    let start = startElement.value;
+    let end = endElement.value;
 
     if (start === '') {
         // If empty, set placeholder
-        document.getElementById('start').placeholder = new Date(new Date().getTime() - 8640000).toISOString().split('T')[0];
+        startElement.placeholder = new Date(new Date().getTime() - 8640000).toISOString().split('T')[0];
         return false;
     } else if ( !start.match(/^\d{4}-[01]\d-[0-3]\d$/)) {
         // If invalid date, make it red and return false
-        document.getElementById('start').style.color = 'red';
+        startElement.style.color = 'red';
         return false;
     }
 
     if (end === '') {
-        document.getElementById('end').placeholder = new Date().toISOString().split('T')[0];
+        endElement.placeholder = new Date().toISOString().split('T')[0];
         return false;
     } else if (!end.match(/^\d{4}-[01]\d-[0-3]\d$/)) {
-        document.getElementById('end').style.color = 'red';
+        endElement.style.color = 'red';
         return false;
     }
 
@@ -304,14 +307,14 @@ function validateDateInputs() {
 
         // If start after end, make both red
         
-        document.getElementById('start').style.color = 'red';
-        document.getElementById('end').style.color = 'red';
+        startElement.style.color = 'red';
+        endElement.style.color = 'red';
         return false;
     }
 
     // Both good, make them both black
-    document.getElementById('start').style.color = 'black';
-    document.getElementById('end').style.color = 'black';
+    startElement.style.color = 'black';
+    endElement.style.color = 'black';
 
     return true;
 }
@@ -340,8 +343,8 @@ async function main() {
             return;
         }
 
-        start = document.getElementById('start').value;
-        end = document.getElementById('end').value;
+        let start = startElement.value;
+        let end = endElement.value;
 
         data = await fetch(`fetch/${start}/${end}`)
         .then(response => {
@@ -369,7 +372,7 @@ async function main() {
 }
 
 // set defaults
-document.getElementById('start').value = new Date(new Date().getTime() - 86400000).toISOString().split('T')[0];
-document.getElementById('end').value = new Date().toISOString().split('T')[0];
+startElement.value = new Date(new Date().getTime() - 86400000).toISOString().split('T')[0];
+endElement.value = new Date().toISOString().split('T')[0];
 
 main();

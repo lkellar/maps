@@ -6,6 +6,7 @@ import pytz
 from flask import render_template, jsonify
 from maps import app
 from maps.models import Call
+from maps.util import convert_naive_utc
 
 
 @app.route('/')
@@ -26,12 +27,13 @@ def fetch_days(days=1):
     # Convert all the call objects to dict
     return jsonify([i.serialize for i in data])
 
+
 @app.route('/fetch/<start>/<end>')
 def fetch_date_range(start, end):
     timezone = app.config['TIMEZONE']
 
-    start = timezone.localize(datetime.strptime(start, '%Y-%m-%d')).astimezone(pytz.UTC)
-    end = timezone.localize(datetime.strptime(end, '%Y-%m-%d')).astimezone(pytz.UTC)
+    start = convert_naive_utc(datetime.strptime(start, '%Y-%m-%d'), timezone)
+    end = convert_naive_utc(datetime.strptime(end, '%Y-%m-%d'), timezone)
 
     data = Call.query.filter(Call.timestamp.between(start, end)).all()
 

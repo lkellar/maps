@@ -30,7 +30,7 @@ def request_post(*args, params=None, **kwargs):
         return requests.post(*args, params=params, **kwargs)
     except requests.ConnectionError:
         # See notes in request_get
-        return BingTimeoutError()
+        raise BingTimeoutError()
 
 
 def request_get(*args, params=None, **kwargs):
@@ -41,7 +41,7 @@ def request_get(*args, params=None, **kwargs):
         # Something broke on Bing Maps API end, happens a couple times a month. No worries though, we'll just grab it on the next run
         # Interesting bit is, it usually happens in batches, like 5 in a day, then nothing for a couple weeks, I guess just bing maps outages, or something with our account
         # Problem is always resolved by just trying again later though
-        return BingTimeoutError()
+        raise BingTimeoutError()
 
 
 # ------------------------------ GEO-CODING RESULT CLASS ------------------------------

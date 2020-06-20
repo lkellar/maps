@@ -4,7 +4,7 @@ import pytz
 
 from maps.models import Call, CallQuery
 from maps import db
-from maps.util import convert_naive_utc
+from maps.util import convert_naive_to_db
 
 
 FAYETTEVILLE_TZ = pytz.timezone('America/Chicago')
@@ -49,8 +49,8 @@ def create_call(row: dict) -> Call:
     # Create a naive timestamp from the date (DispatchTime) and time (DispatchTime2)
     timestamp = datetime.strptime(row['DispatchTime'] + '' + row['DispatchTime2'],
                                   '%m-%d-%Y%H:%M:%S')
-    # Then convert to UTC
-    timestamp = convert_naive_utc(timestamp, FAYETTEVILLE_TZ)
+    # Then convert to database timezone
+    timestamp = convert_naive_to_db(timestamp, FAYETTEVILLE_TZ)
 
     lat = float(row['lat'])
     lon = float(row['lon'])

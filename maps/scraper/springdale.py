@@ -6,7 +6,7 @@ from maps import db
 from maps.models import Call, CallQuery
 from .geocoder import geocode_lookup
 from .geocoder.exceptions import BingStallError, BingTimeoutError
-from maps.util import convert_naive_utc
+from maps.util import convert_naive_to_db
 
 
 SPRINGDALE_TZ = pytz.timezone('America/Chicago')
@@ -99,5 +99,5 @@ def generate_timestamp(month_day: str) -> datetime:
     # Create a naive timestamp with the year
     timestamp = datetime.strptime(f'{year}/{month}/{day}', '%Y/%m/%d %H:%M:%S')
 
-    # Then convert to UTC
-    return convert_naive_utc(timestamp, SPRINGDALE_TZ)
+    # Then convert to database timezone
+    return convert_naive_to_db(timestamp, SPRINGDALE_TZ)

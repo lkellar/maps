@@ -4,7 +4,7 @@ import pytz
 
 from maps import db
 from maps.models import Call, CallQuery
-from .geocoder import geocode_lookup
+from .geocoder import geocode_lookup_zipcode
 from .geocoder.exceptions import BingStallError, BingTimeoutError
 from maps.util import convert_naive_utc
 
@@ -14,7 +14,7 @@ SPRINGDALE_TZ = pytz.timezone('America/Chicago')
 
 def geocode_calls(calls):
     addresses = list(set(call.address for call in calls))
-    address_to_geocode = geocode_lookup(addresses)
+    address_to_geocode = geocode_lookup_zipcode(addresses, '72764')
 
     for call in calls:
         # Lookup the coordinates for the address from our response
@@ -23,7 +23,7 @@ def geocode_calls(calls):
         call.lon = float(result['lon'])
         call.city = result['city']
 
-    return calls
+    return list(set(calls))
 
 
 def scrape_to_db():

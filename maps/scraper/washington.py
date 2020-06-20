@@ -9,14 +9,14 @@ from maps.models import Call, CallQuery
 from maps.util import convert_naive_utc
 
 from .geocoder.exceptions import BingStallError, BingTimeoutError
-from .geocoder import geocode_lookup
+from .geocoder import geocode_lookup_city
 
 WASHINGTON_TZ = pytz.timezone('America/Chicago')
 
 
 def geocode_calls(calls: [Call]):
-    addresses = list(set(call.address.strip() for call in calls))
-    address_to_geocode = geocode_lookup(addresses)
+    addresses = list(({'address': call.address.strip(), 'city': call.city.strip()} for call in calls))
+    address_to_geocode = geocode_lookup_city(addresses)
 
     for call in calls:
         # Lookup the coordinates for the address from our response
@@ -25,7 +25,7 @@ def geocode_calls(calls: [Call]):
         call.lon = float(result['lon'])
         call.city = result['city']
 
-    return calls
+    return list(set(calls))
 
 
 def scrape_to_db():
@@ -93,7 +93,7 @@ def scrape_to_db():
             notes = '\n'.join(notes)
 
             # City is provided, but we aren't using it
-            call = Call(timestamp=timestamp, address=address, call_type=call_draft['Type'], notes=notes)
+            call = Call(timestamp=timestamp, address=address, call_type=call_draft['Type'], notes=notes, city=call_draft['City'])
 
             if existing_call := CallQuery.get_existing_with_address(call):
                 existing_call.notes = notes

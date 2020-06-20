@@ -32,8 +32,16 @@ def fetch_days(days=1):
 def fetch_date_range(start, end):
     timezone = app.config['TIMEZONE']
 
-    start = convert_naive_utc(datetime.strptime(start, '%Y-%m-%d'), timezone)
-    end = convert_naive_utc(datetime.strptime(end, '%Y-%m-%d'), timezone)
+    # Start should be beginning of day
+    start += 'T00:00:00'
+    # End should be end of day
+    end += 'T23:59:59'
+
+    try:
+        start = convert_naive_utc(datetime.strptime(start, '%Y-%m-%dT%H:%M:%S'), timezone)
+        end = convert_naive_utc(datetime.strptime(end, '%Y-%m-%dT%H:%M:%S'), timezone)
+    except ValueError:
+        return 'Invalid Dates. Dates should be in YYYY-MM-DD format.', 400
 
     data = Call.query.filter(Call.timestamp.between(start, end)).all()
 

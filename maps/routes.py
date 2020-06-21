@@ -6,7 +6,7 @@ import pytz
 from flask import render_template, jsonify
 from maps import app
 from maps.models import Call
-from maps.util import convert_naive_utc
+from maps.util import convert_naive_to_db
 
 
 @app.route('/')
@@ -30,10 +30,19 @@ def fetch_days(days=1):
 
 @app.route('/fetch/<start>/<end>')
 def fetch_date_range(start, end):
-    timezone = app.config['TIMEZONE']
+    # Note: start and end are treated as America/Chicago time
+    local_timezone = pytz.timezone("America/Chicago")
 
-    start = convert_naive_utc(datetime.strptime(start, '%Y-%m-%d'), timezone)
-    end = convert_naive_utc(datetime.strptime(end, '%Y-%m-%d'), timezone)
+    # Start should be beginning of day
+    start += 'T00:00:00'
+    # End should be end of day
+    end += 'T23:59:59'
+
+    try:
+        start = convert_naive_to_db(datetime.strptime(start, '%Y-%m-%dT%H:%M:%S'), local_timezone)
+        end = convert_naive_to_db(datetime.strptime(end, '%Y-%m-%dT%H:%M:%S'), local_timezone)
+    except ValueError:
+        return 'Invalid Dates. Dates should be in YYYY-MM-DD format.', 400
 
     data = Call.query.filter(Call.timestamp.between(start, end)).all()
 

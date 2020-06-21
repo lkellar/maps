@@ -6,7 +6,7 @@ import pytz
 
 from maps import db
 from maps.models import Call, CallQuery
-from maps.util import convert_naive_utc
+from maps.util import convert_naive_to_db
 
 from .geocoder.exceptions import BingStallError, BingTimeoutError
 from .geocoder import geocode_lookup
@@ -129,5 +129,5 @@ def generate_timestamp(date: str, time: str) -> datetime:
     # Convert to datetime
     timestamp = datetime.strptime(f'{date} {time}', '%m/%d/%Y %H:%M %p')
 
-    # Convert to UTC and return
-    return convert_naive_utc(timestamp, WASHINGTON_TZ)
+    # Convert to database timezone and return
+    return convert_naive_to_db(timestamp, WASHINGTON_TZ)

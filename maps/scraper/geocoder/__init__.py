@@ -14,12 +14,12 @@ from .exceptions import BingKeyNotFound, BingStallError
 # ------------------------------ GEO-CODING FUNCTIONS ------------------------------
 
 
-def geocode_lookup_city(addressCities: [dict]) -> dict:
+def geocode_lookup_city(addresses_cities: [dict]) -> dict:
     """
     This function uses Bing's geocodeLookup service to get lat/lon and city from addresses.
 
-    :param addressCities: list of dicts with following format {address: str, city: str} (if this was typescript, I could set this as the type smh)
-    :return: a dict of addresses -> (lat, lon)
+    :param addresses_cities: list of dicts with following format {address: str, city: str}
+    :return: a dict of addresses -> (lat, lon, city)
     """
 
     if not current_app.config.get("BING_MAPS_KEY"):
@@ -27,10 +27,10 @@ def geocode_lookup_city(addressCities: [dict]) -> dict:
 
     job_manager = JobManager()
 
-    while addressCities:
+    while addresses_cities:
         # Select first 50 addresses
-        batch = addressCities[:50]
-        del addressCities[:50]
+        batch = addresses_cities[:50]
+        del addresses_cities[:50]
 
         # Start a job
         job_manager.create_city_job(batch)
@@ -48,7 +48,8 @@ def geocode_lookup_zipcode(addresses: [str], zipcode: str) -> dict:
     This function uses Bing's geocodeLookup service to get lat/lon and city from addresses.
 
     :param addresses: List of all the addresses to geocode.
-    :return: a dict of addresses -> (lat, lon)
+    :param zipcode: Zip code shared by addresses, helps geocoder find correct location
+    :return: a dict of addresses -> (lat, lon, city)
     """
 
     if not current_app.config.get("BING_MAPS_KEY"):

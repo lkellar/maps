@@ -7,7 +7,7 @@ import time
 import requests
 
 from .exceptions import BingAPIError, BingStallError, BingTimeoutError
-from .settings import GeocodeDataflow, KEY_PARAMS
+from .settings import GDZipCode, GDCity, KEY_PARAMS
 
 
 # ------------------------------ API REQUEST WRAPPERS ------------------------------
@@ -53,13 +53,7 @@ class Result:
         values = list(filter(None, values))
 
         # Set properties in order (result follows heading schema)
-        # Zipcode will be inaccurate most likely, pls ignore it
-        self.id, self.address, self.zipcode, self.state, self.country, self.lat, self.lon, self.city = values
-
-
-def format_address(id_, address, zipcode=72764, state='AR', country='US'):
-    """ Format geocode request body according to our Geocode Dataflow heading """
-    return f'{id_}|{address}|{zipcode}|{state}|{country}'
+        self.id, self.address, self.zipOrCityInput, self.state, self.country, self.lat, self.lon, self.city = values
 
 
 # ------------------------------ JOB MANAGER ------------------------------
@@ -72,20 +66,30 @@ class JobManager:
         self.results: [Result] = []
         self.address_to_geocode = {}
 
-    def create(self, addresses):
+    def create_city_job(self, addresses_cities: list):
         """
-        Start the job
+        Start the job based on cities
+        :param addresses_cities: list of dicts with following format {address: str, city: str} (LIMIT 50)
+        """
+        if len(addresses_cities) > 50:
+            raise ValueError(f'Only 50 addresses at a time. You provided {len(addresses_cities)} addresses')
+
+        input_data = GDCity.generate(addresses_cities)
+        self.create_job_internal(input_data)
+
+    def create_zipcode_job(self, addresses: list, zipcode: str):
+        """
+        Start the job based on zipcode
         :param addresses: list of addresses to geocode (LIMIT 50 ADDRESSES)
+        :param zipcode: Zipcode to send to bing maps
         """
         if len(addresses) > 50:
-            return ValueError(f'Only 50 addresses at a time. You provided {len(addresses)} addresses')
+            raise ValueError(f'Only 50 addresses at a time. You provided {len(addresses)} addresses')
 
-        # Format each address according to our heading
-        formatted_addresses = [format_address(idx, address) for idx, address in enumerate(addresses)]
-
-        # Generate input data to post in the body of the request
-        input_data = GeocodeDataflow.HEADING + '\n' + '\n'.join(formatted_addresses)
-
+        input_data = GDZipCode.generate(addresses, zipcode)
+        self.create_job_internal(input_data)
+        
+    def create_job_internal(self, input_data: str):
         params = {
             'input': 'pipe',  # We are using pipe (|) as a separator in our input data
             'output': 'json',  # We want the output format to be JSON
@@ -150,7 +154,6 @@ class JobManager:
 
         # It is time to download those hot new addresses. Exciting right? Almost as exciting as getting a dell
         results_txt = request_get(self.completed_url).text
-
 
         # Split into list
         rows = results_txt.split('\n')

@@ -9,23 +9,23 @@ from maps.models import Call, CallQuery
 from maps.util import convert_naive_to_db
 
 from .geocoder.exceptions import BingStallError, BingTimeoutError
-from .geocoder import geocode_lookup
+from .geocoder import geocode_lookup_city
 
 WASHINGTON_TZ = pytz.timezone('America/Chicago')
 
 
 def geocode_calls(calls: [Call]):
-    addresses = list(set(call.address.strip() for call in calls))
-    address_to_geocode = geocode_lookup(addresses)
+    addresses_cities = [{'address': call.address, 'city': call.city} for call in calls]
+    address_to_geocode = geocode_lookup_city(addresses_cities)
 
     for call in calls:
         # Lookup the coordinates for the address from our response
-        result = address_to_geocode[call.address.strip()]
+        result = address_to_geocode[call.address]
         call.lat = float(result['lat'])
         call.lon = float(result['lon'])
         call.city = result['city']
 
-    return calls
+    return list(set(calls))
 
 
 def scrape_to_db():
@@ -36,64 +36,59 @@ def scrape_to_db():
         CallNumber, CaseNumber, Date, Time, Assist, Location (Address), City
     """
 
+    # Washington data source is an HTML response, containing table rows.
+    # The rows contain properties of calls, in the form of tds which alternate key, value, key, value.
+    # Some rows contain only an hr (horizontal rule), acting as a separator between rows that, together, make up a call.
     response = requests.get('https://www.so.washington.ar.us/res/callsforservice.aspx').text
 
-    # No json, use BS4 for html parsing
+    # Use bs4 for html parsing
     soup = BeautifulSoup(response, 'html.parser')
 
-    # structure is a bunch of trs containing tds, one td for key, one td for value, then a tr containing
-    # an hr to seperate calls
-    # first row is empty
+    # Find all table rows, except first one (which is empty)
     rows = soup.find_all('tr')[1:]
-    grouped_rows = []
-    internal_row = []
+    td_groups = []  # List containing groups of tds (each group representing a call)
+    new_group = []  # Latest group of tds (representing a call)
 
-    # basically a .split() where the param is trs with hr
-    for row in rows:
-        if row.find('hr'):
-            grouped_rows.append(internal_row)
-            internal_row = []
+    for tr in rows:
+        # If row contains a horizontal rule separator, latest group is finished
+        if tr.find('hr'):
+            # Append finished group
+            td_groups.append(new_group)
+            # Prepare for next group
+            new_group = []
         else:
-            internal_row.append(row)
+            # Else, append new tds to latest group
+            new_group += tr.find_all('td')
 
     new_calls = []
-    for trs in grouped_rows:
-        # made of TRs with tds inside of them. We want to flatten to get all of the tds
-        trs = [ele.find_all('td') for ele in trs]
-        tds = []
-
-        for tr in trs:
-            tds += tr 
-        
-        # format is a td with a key, then a td with a value
-        call_draft = {}
+    for tds in td_groups:
+        call_props = {}
 
         # This trick will raise a StopIteration exception if there are an odd number of items
         # But if there are an odd number of items, we have a bigger problem
-        it = iter(tds)
+        iterator = iter(tds)
         try:
-            for key in it:
-                call_draft[key.text.replace(':', '')] = next(it).text
+            for td in iterator:
+                key, val = td.text.replace(':', ''), next(iterator).text
+                call_props[key] = val
         except StopIteration as e:
             print(tds)
             raise e
 
-        if address := call_draft.get('Location', None):
-            address = address.replace('  ', ' ')
-            timestamp = generate_timestamp(call_draft['Date'], call_draft['Time'])
+        if address := call_props.get('Location', None):
+            address = address.replace('  ', ' ').strip()
+            timestamp = generate_timestamp(call_props['Date'], call_props['Time'])
+            city = call_props['City'].strip()
 
             # call and case number, both optional, note attributes
             notes = []
-            if call_number := call_draft['Call Number']:
+            if call_number := call_props['Call Number']:
                 notes.append(f'Call Number: {call_number}')
-
-            if case_number := call_draft['Case Number']:
+            if case_number := call_props['Case Number']:
                 notes.append(f'Case Number: {case_number}')
-
             notes = '\n'.join(notes)
 
-            # City is provided, but we aren't using it
-            call = Call(timestamp=timestamp, address=address, call_type=call_draft['Type'], notes=notes)
+            call = Call(timestamp=timestamp, address=address, call_type=call_props['Type'], notes=notes, city=city)
 
             if existing_call := CallQuery.get_existing_with_address(call):
                 existing_call.notes = notes

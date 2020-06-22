@@ -46,12 +46,14 @@ class CallQuery:
     @staticmethod
     def get_existing_with_latlon(call):
         """ Return a call if it exists in the db already, using lat/lon to verify same location """
+        # Using first instead of scalar, in case there are more than one (there shouldn't be)
         return db.session.query(Call).filter_by(
             timestamp=call.timestamp, lat=call.lat, lon=call.lon, call_type=call.call_type,
-        ).scalar()
+        ).first()
 
     @staticmethod
     def get_existing_with_address(call):
         """ Return a call if it exists in the db already, using address to verify same location """
+        # Using first instead of scalar, in case there are more than one (there shouldn't be)
         return db.session.query(Call).filter_by(
-            timestamp=call.timestamp, address=call.address, call_type=call.call_type).scalar()
+            timestamp=call.timestamp, address=call.address, call_type=call.call_type).first()

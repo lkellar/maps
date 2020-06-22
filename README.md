@@ -1,5 +1,5 @@
 # Crime Map
-An easy way to see recent 911 calls made in Fayetteville, Arkansas
+An easy way to see recent 911 calls made in Northwest Arkansas
 
 ## Awards
 We made this project for the [2019 JB Hunt Hackathon](https://hackathon.jbhunt.com/home) and actually won first prize!

@@ -49,7 +49,9 @@ def request_get(*args, params=None, **kwargs):
 class Result:
     def __init__(self, row):
         # Split line up into list by pipe separator, then remove empty strings
-        values = row.split('|')
+        values = row.replace('\r', '').split('|')
+        if values[2] == '' and values[7] != '':
+            values[2] = values[7]
         values = list(filter(None, values))
 
         # Set properties in order (result follows heading schema)

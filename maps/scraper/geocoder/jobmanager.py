@@ -5,6 +5,7 @@ See API documentation:
 """
 import time
 import requests
+from dataclasses import dataclass
 
 from .exceptions import BingAPIError, BingStallError, BingTimeoutError
 from .settings import GDZipCode, GDCity, KEY_PARAMS
@@ -46,16 +47,28 @@ def request_get(*args, params=None, **kwargs):
 
 # ------------------------------ GEO-CODING RESULT CLASS ------------------------------
 
+@dataclass
 class Result:
-    def __init__(self, row):
-        # Split line up into list by pipe separator, then remove empty strings
-        values = row.replace('\r', '').split('|')
-        if values[2] == '' and values[7] != '':
-            values[2] = values[7]
-        values = list(filter(None, values))
+    # inputs
+    id: int
+    address:  str
+    zipCityInput: str  # either zip code or city depending on type of job
+    state: str
+    country: str
+    # responses
+    lat: float
+    lon: float
+    city: str
 
+    @staticmethod
+    def parse(row):
+        # Split line up into list by pipe separator
+        values = row.split('|')
         # Set properties in order (result follows heading schema)
-        self.id, self.address, self.zipOrCityInput, self.state, self.country, self.lat, self.lon, self.city = values
+        id_, address, zip_city_input, state, country, lat, lon, city = values
+        # Return result with correct data types
+        return Result(int(id_), address, zip_city_input, state, country,
+                      float(lat), float(lon), city.replace('\r', ''))
 
 
 # ------------------------------ JOB MANAGER ------------------------------
@@ -165,7 +178,7 @@ class JobManager:
         rows = rows[2:]
 
         for row in rows:
-            result = Result(row)
+            result = Result.parse(row)
             self.results.append(result)
             self.address_to_geocode[result.address] = {'lat': result.lat, 'lon': result.lon,
-                                                       'city': result.city.rstrip('\r')}
+                                                       'city': result.city}

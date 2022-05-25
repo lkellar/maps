@@ -75,22 +75,26 @@ def scrape_to_db():
             print(tds)
             raise e
 
-        if address := call_props.get('Location', None):
+        address = call_props.get('Location', None)
+        if address:
             address = address.replace('  ', ' ').strip()
             timestamp = generate_timestamp(call_props['Date'], call_props['Time'])
             city = call_props['City'].strip()
 
             # call and case number, both optional, note attributes
             notes = []
-            if call_number := call_props['Call Number']:
+            call_number = call_props['Call Number']
+            if call_number:
                 notes.append(f'Call Number: {call_number}')
-            if case_number := call_props['Case Number']:
+            case_number = call_props['Case Number']
+            if case_number:
                 notes.append(f'Case Number: {case_number}')
             notes = '\n'.join(notes)
 
             call = Call(timestamp=timestamp, address=address, call_type=call_props['Type'], notes=notes, city=city)
 
-            if existing_call := CallQuery.get_existing_with_address(call):
+            existing_call = CallQuery.get_existing_with_address(call)
+            if existing_call:
                 existing_call.notes = notes
             else:
                 new_calls.append(call)

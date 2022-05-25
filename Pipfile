@@ -15,4 +15,4 @@ sentry-sdk = {extras = ["flask", "sqlalchemy"],version = "*"}
 bs4 = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.7"

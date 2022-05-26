@@ -39,7 +39,7 @@ def scrape_to_db():
     # Washington data source is an HTML response, containing table rows.
     # The rows contain properties of calls, in the form of tds which alternate key, value, key, value.
     # Some rows contain only an hr (horizontal rule), acting as a separator between rows that, together, make up a call.
-    response = requests.get('https://www.so.washington.ar.us/res/callsforservice.aspx').text
+    response = requests.get('https://sheriff.washingtoncountyar.gov/res/callsforservice.aspx').text
 
     # Use bs4 for html parsing
     soup = BeautifulSoup(response, 'html.parser')

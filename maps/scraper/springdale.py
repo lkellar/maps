@@ -86,8 +86,9 @@ def generate_timestamp(month_day: str) -> datetime:
     :param month_day: string following format "%m/%d"
     :return: utc datetime object
     """
-
-    month, day = month_day.split('/')
+    splits = month_day.split('/')
+    month = splits[0]
+    day = splits[1]
     # Since springdale doesn't come w/ year, we provide our own
     year = datetime.now(SPRINGDALE_TZ).year
 

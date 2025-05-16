@@ -19,8 +19,7 @@ import config
 current_dir = os.path.dirname(os.path.realpath(__file__))
 
 # Set up server configuration
-app = Flask(__name__, static_folder='static', static_url_path='/static',
-            template_folder='templates', instance_relative_config=True)
+app = Flask(__name__, static_folder='static', static_url_path=(os.environ['static_url_path'] if 'static_url_path' in os.environ else '/static'), template_folder='templates', instance_relative_config=True)
 app.config.from_object(config)
 # Doing it manually, because apache can mess with working dir
 app.config.from_pyfile(os.path.join(current_dir, '../', 'instance', 'config.py'))
